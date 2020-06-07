@@ -31,8 +31,8 @@ entity DE1_SoC_top_level_sdram is
         -- Audio
         AUD_BCLK    : out std_logic;
         AUD_XCK     : out std_logic;
-        AUD_ADCLRCK : out std_logic;
-        AUD_ADCDAT  : in std_logic;
+        -- AUD_ADCLRCK : out std_logic;
+        -- AUD_ADCDAT  : in std_logic;
         AUD_DACLRCK : out std_logic;
         AUD_DACDAT  : out std_logic;
 
@@ -179,7 +179,6 @@ architecture rtl of DE1_SoC_top_level_sdram is
             sdram_controller_0_wire_dq    : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
             sdram_controller_0_wire_dqm   : out std_logic_vector(1 downto 0);                       -- dqm
             sdram_controller_0_wire_ras_n : out std_logic;                                          -- ras_n
-            sdram_controller_0_wire_we_n  : out std_logic;                                          -- we_n
             sdram_controller_0_wire_we_n  : out std_logic                                           -- we_n
         );
     end component system;
