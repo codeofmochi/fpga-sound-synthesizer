@@ -67,7 +67,7 @@ architecture fsm of i2c_slave is
 begin
 
     -- Avalon slave read
-    as_read : process (clk, reset_n)
+    as_read_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
             as_readdata <= (others => '0');
@@ -79,14 +79,13 @@ begin
                 end case;
             end if;
         end if;
-    end process as_read;
+    end process as_read_process;
 
     -- Avalon slave write
-    as_write : process (clk, reset_n)
+    as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
             reg_busy     <= '0';
-            as_writedata <= (others => '0');
         elsif rising_edge(clk) then
             if as_write = '1' and reg_busy = '0' then
                 case as_address is
@@ -105,7 +104,7 @@ begin
                 reg_busy <= '0';
             end if;
         end if;
-    end process as_write;
+    end process as_write_process;
 
     sclk_gen : process (clk, reset_n)
     begin
@@ -225,7 +224,7 @@ begin
                         sclk_en <= '1';
 
                         if index >= 0 then
-                            index = index - 1;
+                            index <= index - 1;
                             i2c_sdat <= reg_i2c_address(index);
                         else
                             i2c_sdat <= 'Z';
@@ -234,7 +233,7 @@ begin
 
                     when Q_SEND_MSB =>
                         if index >= 8 then
-                            index = index - 1;
+                            index <= index - 1;
                             i2c_sdat <= reg_i2c_data(index);
                         else
                             i2c_sdat <= 'Z';
@@ -243,7 +242,7 @@ begin
 
                     when Q_SEND_LSB =>
                         if index >= 0 then
-                            index = index - 1;
+                            index <= index - 1;
                             i2c_sdat <= reg_i2c_data(index);
                         else
                             i2c_sdat <= 'Z';
