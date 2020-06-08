@@ -23,7 +23,11 @@ entity sound_gen is
         -- WM8731 audio codec
         aud_clk12   : in std_logic; -- This clock MUST be at 12 MHz to ensure 48 KHz sample rate
         aud_daclrck : out std_logic;
-        aud_dacdat  : out std_logic
+        aud_dacdat  : out std_logic;
+
+        -- Debug
+        debug_daclrck : out std_logic;
+        debug_dacdat  : out std_logic
     );
 end entity sound_gen;
 
@@ -71,12 +75,14 @@ begin
     sclk_gen : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
-            sclk_counter <= 0;
-            sclk_en      <= '0';
-            aud_daclrck  <= '0';
+            sclk_counter  <= 0;
+            sclk_en       <= '0';
+            aud_daclrck   <= '0';
+            debug_daclrck <= '0';
 
         elsif falling_edge(aud_clk12) then
-            aud_daclrck <= sclk_en and reg_on;
+            aud_daclrck   <= sclk_en and reg_on;
+            debug_daclrck <= sclk_en and reg_on;
 
             if (sclk_counter < 250) then
                 sclk_counter <= sclk_counter + 1;
@@ -93,6 +99,7 @@ begin
     begin
         if reset_n = '0' then
             aud_dacdat          <= '0';
+            debug_dacdat        <= '0';
             sample_bits_counter <= 0;
             state               <= Q_IDLE;
 
@@ -110,7 +117,8 @@ begin
                     elsif sample_bits_counter = 0 then
                         state <= Q_IDLE;
                     end if;
-                    aud_dacdat <= audio;
+                    aud_dacdat   <= audio;
+                    debug_dacdat <= audio;
 
                 when others =>
                     null;

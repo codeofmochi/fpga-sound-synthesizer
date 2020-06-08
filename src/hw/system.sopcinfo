@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="system" kind="system" version="1.0" fabric="QSYS">
  <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2020.06.08.17:54:37 -->
+ <!-- 2020.06.08.18:51:06 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1591631676</value>
+  <value>1591635066</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -922,6 +922,57 @@ parameters are a RESULT of the module parameters. -->
     <direction>Bidir</direction>
     <width>1</width>
     <role>i2c_sdat</role>
+   </port>
+  </interface>
+  <interface name="debug" kind="conduit_end" version="18.1">
+   <!-- The connection points exposed by a module instance for the
+particular module parameters. Connection points and their
+parameters are a RESULT of the module parameters. -->
+   <parameter name="associatedClock">
+    <type>java.lang.String</type>
+    <value>clock</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="associatedReset">
+    <type>java.lang.String</type>
+    <value></value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="deviceFamily">
+    <type>java.lang.String</type>
+    <value>UNKNOWN</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="generateLegacySim">
+    <type>boolean</type>
+    <value>false</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <type>conduit</type>
+   <isStart>false</isStart>
+   <port>
+    <name>debug_sclk</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>debug_sclk</role>
+   </port>
+   <port>
+    <name>debug_sdat</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>debug_sdat</role>
    </port>
   </interface>
  </module>
@@ -10596,6 +10647,57 @@ parameters are a RESULT of the module parameters. -->
     <role>aud_dacdat</role>
    </port>
   </interface>
+  <interface name="debug" kind="conduit_end" version="18.1">
+   <!-- The connection points exposed by a module instance for the
+particular module parameters. Connection points and their
+parameters are a RESULT of the module parameters. -->
+   <parameter name="associatedClock">
+    <type>java.lang.String</type>
+    <value>clock</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="associatedReset">
+    <type>java.lang.String</type>
+    <value></value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="deviceFamily">
+    <type>java.lang.String</type>
+    <value>UNKNOWN</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <parameter name="generateLegacySim">
+    <type>boolean</type>
+    <value>false</value>
+    <derived>false</derived>
+    <enabled>true</enabled>
+    <visible>true</visible>
+    <valid>true</valid>
+   </parameter>
+   <type>conduit</type>
+   <isStart>false</isStart>
+   <port>
+    <name>debug_daclrck</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>debug_daclrck</role>
+   </port>
+   <port>
+    <name>debug_dacdat</name>
+    <direction>Output</direction>
+    <width>1</width>
+    <role>debug_dacdat</role>
+   </port>
+  </interface>
  </module>
  <module
    name="sysid_qsys_0"
@@ -10610,7 +10712,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.TIMESTAMP</name>
-   <value>1591631676</value>
+   <value>1591635066</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.compatible</name>
@@ -10630,7 +10732,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.timestamp</name>
-   <value>1591631676</value>
+   <value>1591635066</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.vendor</name>
@@ -10646,7 +10748,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="timestamp">
    <type>int</type>
-   <value>1591631676</value>
+   <value>1591635066</value>
    <derived>true</derived>
    <enabled>false</enabled>
    <visible>false</visible>
@@ -12186,7 +12288,7 @@ parameters are a RESULT of the module parameters. -->
   <version>18.1</version>
  </plugin>
  <plugin>
-  <instanceCount>3</instanceCount>
+  <instanceCount>5</instanceCount>
   <name>conduit_end</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>

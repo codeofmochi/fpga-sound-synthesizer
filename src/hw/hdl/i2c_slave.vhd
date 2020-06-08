@@ -26,7 +26,11 @@ entity i2c_slave is
 
         -- I2C
         i2c_sclk : out std_logic;
-        i2c_sdat : inout std_logic
+        i2c_sdat : inout std_logic;
+
+        -- Debug
+        debug_sclk : out std_logic;
+        debug_sdat : out std_logic
     );
 end entity i2c_slave;
 
@@ -85,7 +89,7 @@ begin
     as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
-            reg_busy     <= '0';
+            reg_busy <= '0';
         elsif rising_edge(clk) then
             if as_write = '1' and reg_busy = '0' then
                 case as_address is
@@ -149,7 +153,9 @@ begin
     begin
         if reset_n = '0' then
             i2c_sclk   <= '1'; -- active low
+            debug_sclk <= '1';
             i2c_sdat   <= '1'; -- active low
+            debug_sdat <= '1';
             sclk_en    <= '0';
             pulse_done <= '0';
             index      <= 0;
@@ -159,9 +165,11 @@ begin
 
             -- assert either sclk or high disable on I2C_SCLK
             if sclk_en = '1' then
-                i2c_sclk <= sclk;
+                i2c_sclk   <= sclk;
+                debug_sclk <= sclk;
             else
-                i2c_sclk <= '1';
+                i2c_sclk   <= '1';
+                debug_sclk <= '1';
             end if;
 
             -- wait for acks on high enable
@@ -207,52 +215,61 @@ begin
                     when Q_IDLE =>
                         -- wait for reg_busy to start operation
                         i2c_sdat   <= '1';
+                        debug_sdat <= '1';
                         pulse_done <= '0';
                         index      <= 0;
-                        if (reg_busy = '1') then
+                        if reg_busy = '1' then
                             state <= Q_START;
                         end if;
 
                     when Q_START =>
                         -- assert start condition
-                        i2c_sdat <= '0';
-                        index    <= 7;
-                        state    <= Q_SEND_ADDRESS;
+                        i2c_sdat   <= '0';
+                        debug_sdat <= '0';
+                        index      <= 7;
+                        state      <= Q_SEND_ADDRESS;
 
                     when Q_SEND_ADDRESS =>
                         -- send 7 bits of address
                         sclk_en <= '1';
 
                         if index >= 0 then
-                            index <= index - 1;
-                            i2c_sdat <= reg_i2c_address(index);
+                            index      <= index - 1;
+                            i2c_sdat   <= reg_i2c_address(index);
+                            debug_sdat <= reg_i2c_address(index);
                         else
-                            i2c_sdat <= 'Z';
-                            state    <= Q_WAIT_ADDRESS_ACK;
+                            i2c_sdat   <= 'Z';
+                            debug_sdat <= 'Z';
+                            state      <= Q_WAIT_ADDRESS_ACK;
                         end if;
 
                     when Q_SEND_MSB =>
                         if index >= 8 then
-                            index <= index - 1;
-                            i2c_sdat <= reg_i2c_data(index);
+                            index      <= index - 1;
+                            i2c_sdat   <= reg_i2c_data(index);
+                            debug_sdat <= reg_i2c_data(index);
                         else
-                            i2c_sdat <= 'Z';
-                            state    <= Q_WAIT_MSB_ACK;
+                            i2c_sdat   <= 'Z';
+                            debug_sdat <= 'Z';
+                            state      <= Q_WAIT_MSB_ACK;
                         end if;
 
                     when Q_SEND_LSB =>
                         if index >= 0 then
-                            index <= index - 1;
-                            i2c_sdat <= reg_i2c_data(index);
+                            index      <= index - 1;
+                            i2c_sdat   <= reg_i2c_data(index);
+                            debug_sdat <= reg_i2c_data(index);
                         else
-                            i2c_sdat <= 'Z';
-                            state    <= Q_WAIT_LSB_ACK;
+                            i2c_sdat   <= 'Z';
+                            debug_sdat <= 'Z';
+                            state      <= Q_WAIT_LSB_ACK;
                         end if;
 
                     when Q_STOP =>
                         -- assert stop condition
                         sclk_en    <= '0';
                         i2c_sdat   <= '0';
+                        debug_sdat <= '0';
                         state      <= Q_IDLE;
                         pulse_done <= '1';
 

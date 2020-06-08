@@ -121,6 +121,14 @@
          type = "String";
       }
    }
+   element system
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -144,6 +152,11 @@
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
  <interface
+   name="i2c_slave_0_debug"
+   internal="i2c_slave_0.debug"
+   type="conduit"
+   dir="end" />
+ <interface
    name="i2c_slave_0_i2c"
    internal="i2c_slave_0.i2c"
    type="conduit"
@@ -159,6 +172,11 @@
  <interface
    name="sound_gen_0_audio"
    internal="sound_gen_0.audio"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="sound_gen_0_debug"
+   internal="sound_gen_0.debug"
    type="conduit"
    dir="end" />
  <module name="clk_0" kind="clock_source" version="18.1" enabled="1">
