@@ -172,6 +172,7 @@ architecture rtl of DE1_SoC_top_level_sdram is
         port (
             clk_clk                       : in std_logic := 'X';                                    -- clk
             reset_reset_n                 : in std_logic := 'X';                                    -- reset_n
+            pll_0_clk12_clk               : out std_logic;                                          -- clk
             pll_0_sdram_clk               : out std_logic;                                          -- clk
             sdram_controller_0_wire_addr  : out std_logic_vector(12 downto 0);                      -- addr
             sdram_controller_0_wire_ba    : out std_logic_vector(1 downto 0);                       -- ba
@@ -184,7 +185,9 @@ architecture rtl of DE1_SoC_top_level_sdram is
             sdram_controller_0_wire_we_n  : out std_logic;                                          -- we_n
             i2c_slave_0_i2c_i2c_sclk      : out std_logic;                                          -- i2c_sclk
             i2c_slave_0_i2c_i2c_sdat      : inout std_logic := 'X';                                 -- i2c_sdat
-            pll_0_clk12_clk               : out std_logic                                           -- clk
+            sound_gen_0_audio_aud_clk12   : in std_logic    := 'X';                                 -- aud_clk12
+            sound_gen_0_audio_aud_daclrck : out std_logic;                                          -- aud_daclrck
+            sound_gen_0_audio_aud_dacdat  : out std_logic                                           -- aud_dacdat
         );
     end component system;
 begin
@@ -196,6 +199,7 @@ begin
         port map(
             clk_clk                        => CLOCK_50,      -- clk.clk
             reset_reset_n                  => KEY_N(0),      -- reset.reset_n
+            pll_0_clk12_clk                => clk12,         -- pll_0_clk12.clk
             pll_0_sdram_clk                => DRAM_CLK,      -- pll_0_sdram.clk
             sdram_controller_0_wire_addr   => DRAM_ADDR,     -- sdram_controller_0_wire.addr
             sdram_controller_0_wire_ba     => DRAM_BA,       -- .ba
@@ -209,6 +213,8 @@ begin
             sdram_controller_0_wire_we_n   => DRAM_WE_N,     -- .we_n
             i2c_slave_0_i2c_i2c_sclk       => FPGA_I2C_SCLK, -- i2c_slave_0_i2c.i2c_sclk
             i2c_slave_0_i2c_i2c_sdat       => FPGA_I2C_SDAT, -- .i2c_sdat
-            pll_0_clk12_clk                => clk12          -- pll_0_clk12.clk
+            sound_gen_0_audio_aud_clk12    => clk12,         -- sound_gen_0_audio.aud_clk12
+            sound_gen_0_audio_aud_daclrck  => AUD_DACLRCK,   -- .aud_daclrck
+            sound_gen_0_audio_aud_dacdat   => AUD_DACDAT     -- .aud_dacdat
         );
     end architecture rtl;

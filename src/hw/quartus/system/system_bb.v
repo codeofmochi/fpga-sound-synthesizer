@@ -3,6 +3,7 @@ module system (
 	clk_clk,
 	i2c_slave_0_i2c_i2c_sclk,
 	i2c_slave_0_i2c_i2c_sdat,
+	pll_0_clk12_clk,
 	pll_0_sdram_clk,
 	reset_reset_n,
 	sdram_controller_0_wire_addr,
@@ -14,11 +15,14 @@ module system (
 	sdram_controller_0_wire_dqm,
 	sdram_controller_0_wire_ras_n,
 	sdram_controller_0_wire_we_n,
-	pll_0_clk12_clk);	
+	sound_gen_0_audio_aud_clk12,
+	sound_gen_0_audio_aud_daclrck,
+	sound_gen_0_audio_aud_dacdat);	
 
 	input		clk_clk;
 	output		i2c_slave_0_i2c_i2c_sclk;
 	inout		i2c_slave_0_i2c_i2c_sdat;
+	output		pll_0_clk12_clk;
 	output		pll_0_sdram_clk;
 	input		reset_reset_n;
 	output	[12:0]	sdram_controller_0_wire_addr;
@@ -30,5 +34,7 @@ module system (
 	output	[1:0]	sdram_controller_0_wire_dqm;
 	output		sdram_controller_0_wire_ras_n;
 	output		sdram_controller_0_wire_we_n;
-	output		pll_0_clk12_clk;
+	input		sound_gen_0_audio_aud_clk12;
+	output		sound_gen_0_audio_aud_daclrck;
+	output		sound_gen_0_audio_aud_dacdat;
 endmodule
