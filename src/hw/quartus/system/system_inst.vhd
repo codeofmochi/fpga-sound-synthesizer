@@ -1,6 +1,8 @@
 	component system is
 		port (
 			clk_clk                       : in    std_logic                     := 'X';             -- clk
+			i2c_slave_0_i2c_i2c_sclk      : out   std_logic;                                        -- i2c_sclk
+			i2c_slave_0_i2c_i2c_sdat      : inout std_logic                     := 'X';             -- i2c_sdat
 			pll_0_sdram_clk               : out   std_logic;                                        -- clk
 			reset_reset_n                 : in    std_logic                     := 'X';             -- reset_n
 			sdram_controller_0_wire_addr  : out   std_logic_vector(12 downto 0);                    -- addr
@@ -11,13 +13,16 @@
 			sdram_controller_0_wire_dq    : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
 			sdram_controller_0_wire_dqm   : out   std_logic_vector(1 downto 0);                     -- dqm
 			sdram_controller_0_wire_ras_n : out   std_logic;                                        -- ras_n
-			sdram_controller_0_wire_we_n  : out   std_logic                                         -- we_n
+			sdram_controller_0_wire_we_n  : out   std_logic;                                        -- we_n
+			pll_0_clk12_clk               : out   std_logic                                         -- clk
 		);
 	end component system;
 
 	u0 : component system
 		port map (
 			clk_clk                       => CONNECTED_TO_clk_clk,                       --                     clk.clk
+			i2c_slave_0_i2c_i2c_sclk      => CONNECTED_TO_i2c_slave_0_i2c_i2c_sclk,      --         i2c_slave_0_i2c.i2c_sclk
+			i2c_slave_0_i2c_i2c_sdat      => CONNECTED_TO_i2c_slave_0_i2c_i2c_sdat,      --                        .i2c_sdat
 			pll_0_sdram_clk               => CONNECTED_TO_pll_0_sdram_clk,               --             pll_0_sdram.clk
 			reset_reset_n                 => CONNECTED_TO_reset_reset_n,                 --                   reset.reset_n
 			sdram_controller_0_wire_addr  => CONNECTED_TO_sdram_controller_0_wire_addr,  -- sdram_controller_0_wire.addr
@@ -28,6 +33,7 @@
 			sdram_controller_0_wire_dq    => CONNECTED_TO_sdram_controller_0_wire_dq,    --                        .dq
 			sdram_controller_0_wire_dqm   => CONNECTED_TO_sdram_controller_0_wire_dqm,   --                        .dqm
 			sdram_controller_0_wire_ras_n => CONNECTED_TO_sdram_controller_0_wire_ras_n, --                        .ras_n
-			sdram_controller_0_wire_we_n  => CONNECTED_TO_sdram_controller_0_wire_we_n   --                        .we_n
+			sdram_controller_0_wire_we_n  => CONNECTED_TO_sdram_controller_0_wire_we_n,  --                        .we_n
+			pll_0_clk12_clk               => CONNECTED_TO_pll_0_clk12_clk                --             pll_0_clk12.clk
 		);
 
