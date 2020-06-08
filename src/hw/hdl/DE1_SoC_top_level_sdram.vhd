@@ -166,7 +166,11 @@ entity DE1_SoC_top_level_sdram is
 end entity DE1_SoC_top_level_sdram;
 
 architecture rtl of DE1_SoC_top_level_sdram is
-    signal clk12 : std_logic; -- audio clock at 12 MHz (for WM8731 USB mode)
+    signal clk12    : std_logic; -- audio clock at 12 MHz (for WM8731 USB mode)
+    signal i2c_sclk : std_logic;
+    signal i2c_sdat : std_logic;
+    signal daclrck  : std_logic;
+    signal dacdat   : std_logic;
 
     component system is
         port (
@@ -192,29 +196,39 @@ architecture rtl of DE1_SoC_top_level_sdram is
     end component system;
 begin
     -- WM8731 set in USB mode, must forward 12 MHz clock
-    AUD_BCLK <= clk12; -- sampling clock
-    AUD_XCK  <= clk12; -- master clock
+    AUD_BCLK      <= clk12; -- sampling clock
+    AUD_XCK       <= clk12; -- master clock
+    FPGA_I2C_SCLK <= i2c_sclk;
+    FPGA_I2C_SDAT <= i2c_sdat;
+    AUD_DACLRCK   <= daclrck;
+    AUD_DACDAT    <= dacdat;
+
+    -- Debug
+    GPIO_0_D(0) <= i2c_sclk;
+    GPIO_0_D(1) <= i2c_sdat;
+    GPIO_1_D(0) <= daclrck;
+    GPIO_1_D(1) <= dacdat;
 
     u0 : component system
         port map(
-            clk_clk                        => CLOCK_50,      -- clk.clk
-            reset_reset_n                  => KEY_N(0),      -- reset.reset_n
-            pll_0_clk12_clk                => clk12,         -- pll_0_clk12.clk
-            pll_0_sdram_clk                => DRAM_CLK,      -- pll_0_sdram.clk
-            sdram_controller_0_wire_addr   => DRAM_ADDR,     -- sdram_controller_0_wire.addr
-            sdram_controller_0_wire_ba     => DRAM_BA,       -- .ba
-            sdram_controller_0_wire_cas_n  => DRAM_CAS_N,    -- .cas_n
-            sdram_controller_0_wire_cke    => DRAM_CKE,      -- .cke
-            sdram_controller_0_wire_cs_n   => DRAM_CS_N,     -- .cs_n
-            sdram_controller_0_wire_dq     => DRAM_DQ,       -- .dq
-            sdram_controller_0_wire_dqm(1) => DRAM_UDQM,     -- .dqm_high
-            sdram_controller_0_wire_dqm(0) => DRAM_LDQM,     -- .dqm_low
-            sdram_controller_0_wire_ras_n  => DRAM_RAS_N,    -- .ras_n
-            sdram_controller_0_wire_we_n   => DRAM_WE_N,     -- .we_n
-            i2c_slave_0_i2c_i2c_sclk       => FPGA_I2C_SCLK, -- i2c_slave_0_i2c.i2c_sclk
-            i2c_slave_0_i2c_i2c_sdat       => FPGA_I2C_SDAT, -- .i2c_sdat
-            sound_gen_0_audio_aud_clk12    => clk12,         -- sound_gen_0_audio.aud_clk12
-            sound_gen_0_audio_aud_daclrck  => AUD_DACLRCK,   -- .aud_daclrck
-            sound_gen_0_audio_aud_dacdat   => AUD_DACDAT     -- .aud_dacdat
+            clk_clk                        => CLOCK_50,   -- clk.clk
+            reset_reset_n                  => KEY_N(0),   -- reset.reset_n
+            pll_0_clk12_clk                => clk12,      -- pll_0_clk12.clk
+            pll_0_sdram_clk                => DRAM_CLK,   -- pll_0_sdram.clk
+            sdram_controller_0_wire_addr   => DRAM_ADDR,  -- sdram_controller_0_wire.addr
+            sdram_controller_0_wire_ba     => DRAM_BA,    -- .ba
+            sdram_controller_0_wire_cas_n  => DRAM_CAS_N, -- .cas_n
+            sdram_controller_0_wire_cke    => DRAM_CKE,   -- .cke
+            sdram_controller_0_wire_cs_n   => DRAM_CS_N,  -- .cs_n
+            sdram_controller_0_wire_dq     => DRAM_DQ,    -- .dq
+            sdram_controller_0_wire_dqm(1) => DRAM_UDQM,  -- .dqm_high
+            sdram_controller_0_wire_dqm(0) => DRAM_LDQM,  -- .dqm_low
+            sdram_controller_0_wire_ras_n  => DRAM_RAS_N, -- .ras_n
+            sdram_controller_0_wire_we_n   => DRAM_WE_N,  -- .we_n
+            i2c_slave_0_i2c_i2c_sclk       => i2c_sclk,   -- i2c_slave_0_i2c.i2c_sclk
+            i2c_slave_0_i2c_i2c_sdat       => i2c_sdat,   -- .i2c_sdat
+            sound_gen_0_audio_aud_clk12    => clk12,      -- sound_gen_0_audio.aud_clk12
+            sound_gen_0_audio_aud_daclrck  => daclrck,    -- .aud_daclrck
+            sound_gen_0_audio_aud_dacdat   => dacdat      -- .aud_dacdat
         );
     end architecture rtl;

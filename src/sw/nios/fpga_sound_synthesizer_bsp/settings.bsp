@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Jun 7, 2020 5:22:28 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1591543348875</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Jun 8, 2020 6:03:06 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1591632186066</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>/home/vm/Documents/rtes/Lab4/src/sw/nios/fpga_sound_synthesizer_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>/home/vm/Documents/rtes/Lab4/src/hw/system.sopcinfo</SopcDesignFile>
@@ -905,14 +905,26 @@
                 <attributes>memory</attributes>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>sound_gen_0</slaveDescriptor>
+                <addressRange>0x08001000 - 0x0800100F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>i2c_slave_0</slaveDescriptor>
+                <addressRange>0x08001010 - 0x0800101F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>sysid_qsys_0</slaveDescriptor>
-                <addressRange>0x08001000 - 0x08001007</addressRange>
+                <addressRange>0x08001020 - 0x08001027</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x08001008 - 0x0800100F</addressRange>
+                <addressRange>0x08001028 - 0x0800102F</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>

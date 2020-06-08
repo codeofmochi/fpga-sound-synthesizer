@@ -1158,4 +1158,7 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_D[34]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_D34
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_D[35]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_D35
+set_global_assignment -name ENABLE_SIGNALTAP ON
+set_global_assignment -name USE_SIGNALTAP_FILE quartus/stp1.stp
+set_global_assignment -name SIGNALTAP_FILE quartus/stp1.stp
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

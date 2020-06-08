@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'system'
  * SOPC Builder design path: /home/vm/Documents/rtes/Lab4/src/hw/system.sopcinfo
  *
- * Generated: Sun Jun 07 17:22:29 CEST 2020
+ * Generated: Mon Jun 08 18:03:06 CEST 2020
  */
 
 /*
@@ -145,6 +145,8 @@
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
 #define __ALTERA_AVALON_SYSID_QSYS
 #define __ALTERA_NIOS2_GEN2
+#define __I2C_SLAVE
+#define __SOUND_GEN
 
 
 /*
@@ -163,19 +165,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x8001008
+#define ALT_STDERR_BASE 0x8001028
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x8001008
+#define ALT_STDIN_BASE 0x8001028
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x8001008
+#define ALT_STDOUT_BASE 0x8001028
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -195,12 +197,26 @@
 
 
 /*
+ * i2c_slave_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_i2c_slave_0 i2c_slave
+#define I2C_SLAVE_0_BASE 0x8001010
+#define I2C_SLAVE_0_IRQ -1
+#define I2C_SLAVE_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define I2C_SLAVE_0_NAME "/dev/i2c_slave_0"
+#define I2C_SLAVE_0_SPAN 16
+#define I2C_SLAVE_0_TYPE "i2c_slave"
+
+
+/*
  * jtag_uart_0 configuration
  *
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x8001008
+#define JTAG_UART_0_BASE 0x8001028
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -252,18 +268,32 @@
 
 
 /*
+ * sound_gen_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_sound_gen_0 sound_gen
+#define SOUND_GEN_0_BASE 0x8001000
+#define SOUND_GEN_0_IRQ -1
+#define SOUND_GEN_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define SOUND_GEN_0_NAME "/dev/sound_gen_0"
+#define SOUND_GEN_0_SPAN 16
+#define SOUND_GEN_0_TYPE "sound_gen"
+
+
+/*
  * sysid_qsys_0 configuration
  *
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x8001000
+#define SYSID_QSYS_0_BASE 0x8001020
 #define SYSID_QSYS_0_ID 0
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1591542734
+#define SYSID_QSYS_0_TIMESTAMP 1591631676
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */
