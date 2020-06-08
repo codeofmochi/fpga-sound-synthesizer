@@ -35,6 +35,7 @@ architecture fsm of sound_gen is
     -- register map
     constant REG_START_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "00";
     constant REG_STOP_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "01";
+    constant REG_PERIOD_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
 
     -- internal register
     signal reg_on : std_logic;
@@ -50,13 +51,15 @@ architecture fsm of sound_gen is
 
     -- oscillator
     signal audio        : std_logic;
-    signal wave_counter : integer range 0 to 63;
+    signal wave_counter : integer range 0 to 4095;
+    signal half_period  : std_logic_vector(31 downto 0);
 begin
     -- writes to the status registers on Avalon writes
     as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
             reg_on <= '0';
+            half_period <= std_logic_vector(to_unsigned(54, half_period'length)); -- default is A440Hz
         elsif rising_edge(clk) then
             if as_write = '1' then
                 case as_address is
@@ -64,6 +67,8 @@ begin
                         reg_on <= '1';
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
+                    when REG_PERIOD_OFFSET =>
+                        half_period <= as_writedata;
                     when others =>
                         null;
                 end case;
@@ -135,7 +140,7 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                if wave_counter >= 54 then
+                if wave_counter >= to_integer(unsigned(half_period)) then
                     wave_counter <= 0;
                     audio        <= not audio;
                 else

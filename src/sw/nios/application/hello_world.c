@@ -33,6 +33,10 @@ void i2c_configure(uint8_t address, uint16_t data) {
 	} while (busy);
 }
 
+void sound_set_half_period(uint32_t half_period) {
+	IOWR_32DIRECT(SOUND_GEN_0_BASE, 8, half_period);
+}
+
 void sound_start() {
 	IOWR_32DIRECT(SOUND_GEN_0_BASE, 0, 1);
 }
@@ -47,7 +51,7 @@ void setup_audio_codec() {
 	// DSP, 16-bit, slave mode
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0000111000010011);
 	// Headphone volume
-	i2c_configure(WM8731_I2C_ADDRESS, 0b0000010101111001);
+	i2c_configure(WM8731_I2C_ADDRESS, 0b0000010101111111);
 	// USB mode
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0001000000000001);
 	// DAC to Line Out
@@ -64,6 +68,7 @@ int main()
   setup_audio_codec();
 
   printf("Starting oscillator...\n");
+  sound_set_half_period(108);
   sound_start();
 
   while(1);
