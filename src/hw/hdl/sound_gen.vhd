@@ -33,12 +33,13 @@ end entity sound_gen;
 
 architecture fsm of sound_gen is
     -- register map
-    constant REG_START_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "00";
-    constant REG_STOP_OFFSET   : std_logic_vector(as_address'length - 1 downto 0) := "01";
-    constant REG_PERIOD_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
+    constant REG_START_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "00";
+    constant REG_STOP_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "01";
+    constant REG_NOTE_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "10";
 
     -- internal register
-    signal reg_on : std_logic;
+    signal reg_on    : std_logic;
+    signal note_step : unsigned(31 downto 0);
 
     -- slow clock at 48 KHz
     signal sclk_counter : integer range 0 to 255;
@@ -52,14 +53,14 @@ architecture fsm of sound_gen is
     -- oscillator
     signal audio  : std_logic_vector(31 downto 0);
     signal sample : integer range 0 to integer'high;
-    signal period : std_logic_vector(31 downto 0);
 begin
     -- writes to the status registers on Avalon writes
     as_write_process : process (clk, reset_n)
+        variable octave_shift : integer range -3 to 2;
     begin
         if reset_n = '0' then
-            reg_on <= '0';
-            period <= std_logic_vector(to_unsigned(0, period'length));
+            reg_on    <= '0';
+            note_step <= to_unsigned(0, note_step'length);
 
         elsif rising_edge(clk) then
             if as_write = '1' then
@@ -68,8 +69,114 @@ begin
                         reg_on <= '1';
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
-                    when REG_PERIOD_OFFSET =>
-                        period <= as_writedata;
+                    when REG_NOTE_OFFSET =>
+                        octave_shift := to_integer(unsigned(as_writedata(6 downto 4))) - 5;
+                        -- if note is A, A# or B, must compensate for lower octave 
+                        if to_integer(unsigned(as_writedata(3 downto 0))) <= 2 then
+                            octave_shift := octave_shift + 1;
+                        end if;
+
+                        -- assign note step given shift and sample value delta
+                        case to_integer(unsigned(as_writedata(3 downto 0))) is
+                            when 0 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(601, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(601, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(601, note_step'length);
+                                end if;
+                            when 1 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(636, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(636, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(636, note_step'length);
+                                end if;
+                            when 2 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(674, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(674, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(674, note_step'length);
+                                end if;
+                            when 3 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(714, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(714, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(714, note_step'length);
+                                end if;
+                            when 4 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(757, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(757, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(757, note_step'length);
+                                end if;
+                            when 5 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(802, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(802, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(802, note_step'length);
+                                end if;
+                            when 6 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(850, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(850, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(850, note_step'length);
+                                end if;
+                            when 7 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(900, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(900, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(900, note_step'length);
+                                end if;
+                            when 8 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(954, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(954, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(954, note_step'length);
+                                end if;
+                            when 9 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(1010, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(1010, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(1010, note_step'length);
+                                end if;
+                            when 10 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(1070, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(1070, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(1070, note_step'length);
+                                end if;
+                            when 11 =>
+                                if octave_shift < 0 then
+                                    note_step <= shift_right(to_unsigned(1134, note_step'length), 0 - octave_shift);
+                                elsif octave_shift > 0 then
+                                    note_step <= shift_left(to_unsigned(1134, note_step'length), octave_shift);
+                                else
+                                    note_step <= to_unsigned(1134, note_step'length);
+                                end if;
+                            when others =>
+                                note_step <= to_unsigned(222222, note_step'length);
+                        end case;
                     when others =>
                         null;
                 end case;
@@ -132,7 +239,7 @@ begin
         end if;
     end process sound_fsm;
 
-    -- generates a square wave of an A note at 440 Hz
+    -- generates a sound at the given note frequency
     osc : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
@@ -144,7 +251,7 @@ begin
                 if sample >= 65535 then
                     sample <= 0;
                 else
-                    sample <= sample + 606; -- TODO: should be division of period
+                    sample <= sample + to_integer(note_step);
                 end if;
 
                 audio(31 downto 16) <= std_logic_vector(to_unsigned(sample, 16));
