@@ -175,7 +175,7 @@ begin
                                     note_step <= to_unsigned(1134, note_step'length);
                                 end if;
                             when others =>
-                                note_step <= to_unsigned(222222, note_step'length);
+                                note_step <= to_unsigned(0, note_step'length);
                         end case;
                     when others =>
                         null;

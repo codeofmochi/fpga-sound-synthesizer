@@ -16,11 +16,39 @@
 
 #include <stdio.h>
 #include <inttypes.h>
+#include <unistd.h>
 
 #include "system.h"
 #include "io.h"
 
 #define WM8731_I2C_ADDRESS 0x34
+
+enum TONES {
+	A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs
+};
+
+struct NOTE {
+	enum TONES tone;
+	uint8_t scale;
+	uint32_t duration_ms;
+};
+
+#define MUSIC_LENGTH 12
+
+struct NOTE music[MUSIC_LENGTH] = {
+		{A, 4, 1000},
+		{As, 4, 1000},
+		{B, 4, 1000},
+		{C, 5, 1000},
+		{Cs, 5, 1000},
+		{D, 5, 1000},
+		{Ds, 5, 1000},
+		{E, 5, 1000},
+		{F, 5, 1000},
+		{Fs, 5, 1000},
+		{G, 5, 1000},
+		{Gs, 5, 1000}
+};
 
 void i2c_configure(uint8_t address, uint16_t data) {
 	IOWR_32DIRECT(I2C_SLAVE_0_BASE, 0, address);
@@ -33,12 +61,23 @@ void i2c_configure(uint8_t address, uint16_t data) {
 	} while (busy);
 }
 
-void sound_set_period(uint32_t period) {
-	IOWR_32DIRECT(SOUND_GEN_0_BASE, 8, period);
+void sound_set_note(uint32_t note) {
+	IOWR_32DIRECT(SOUND_GEN_0_BASE, 8, note);
 }
 
-void sound_start() {
+void play_music() {
+	// start oscillator
 	IOWR_32DIRECT(SOUND_GEN_0_BASE, 0, 1);
+
+	for (size_t i = 0; i < MUSIC_LENGTH; i++) {
+		// pack scale number with tone identifier
+		uint32_t note = (music[i].scale << 4) | music[i].tone;
+		sound_set_note(note);
+		usleep(music[i].duration_ms * 1000);
+	}
+
+	// stop oscillator
+	IOWR_32DIRECT(SOUND_GEN_0_BASE, 4, 1);
 }
 
 void setup_audio_codec() {
@@ -67,9 +106,8 @@ int main()
   printf("Configuring audio codec...\n");
   setup_audio_codec();
 
-  printf("Starting oscillator...\n");
-  sound_set_period(108);
-  sound_start();
+  printf("Playing music...\n");
+  play_music();
 
   while(1);
 
