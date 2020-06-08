@@ -33,8 +33,8 @@ void i2c_configure(uint8_t address, uint16_t data) {
 	} while (busy);
 }
 
-void sound_set_half_period(uint32_t half_period) {
-	IOWR_32DIRECT(SOUND_GEN_0_BASE, 8, half_period);
+void sound_set_period(uint32_t period) {
+	IOWR_32DIRECT(SOUND_GEN_0_BASE, 8, period);
 }
 
 void sound_start() {
@@ -68,7 +68,7 @@ int main()
   setup_audio_codec();
 
   printf("Starting oscillator...\n");
-  sound_set_half_period(108);
+  sound_set_period(108);
   sound_start();
 
   while(1);

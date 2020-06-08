@@ -33,8 +33,8 @@ end entity sound_gen;
 
 architecture fsm of sound_gen is
     -- register map
-    constant REG_START_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "00";
-    constant REG_STOP_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "01";
+    constant REG_START_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "00";
+    constant REG_STOP_OFFSET   : std_logic_vector(as_address'length - 1 downto 0) := "01";
     constant REG_PERIOD_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
 
     -- internal register
@@ -50,16 +50,17 @@ architecture fsm of sound_gen is
     signal sample_bits_counter : integer range 0 to 31;
 
     -- oscillator
-    signal audio        : std_logic;
-    signal wave_counter : integer range 0 to 4095;
-    signal half_period  : std_logic_vector(31 downto 0);
+    signal audio  : std_logic_vector(31 downto 0);
+    signal sample : integer range 0 to integer'high;
+    signal period : std_logic_vector(31 downto 0);
 begin
     -- writes to the status registers on Avalon writes
     as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
             reg_on <= '0';
-            half_period <= std_logic_vector(to_unsigned(54, half_period'length)); -- default is A440Hz
+            period <= std_logic_vector(to_unsigned(0, period'length));
+
         elsif rising_edge(clk) then
             if as_write = '1' then
                 case as_address is
@@ -68,7 +69,7 @@ begin
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
                     when REG_PERIOD_OFFSET =>
-                        half_period <= as_writedata;
+                        period <= as_writedata;
                     when others =>
                         null;
                 end case;
@@ -122,8 +123,8 @@ begin
                     elsif sample_bits_counter = 0 then
                         state <= Q_IDLE;
                     end if;
-                    aud_dacdat   <= audio;
-                    debug_dacdat <= audio;
+                    aud_dacdat   <= audio(sample_bits_counter);
+                    debug_dacdat <= audio(sample_bits_counter);
 
                 when others =>
                     null;
@@ -135,17 +136,19 @@ begin
     osc : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
-            audio        <= '0';
-            wave_counter <= 0;
+            audio  <= (others => '0');
+            sample <= 0;
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                if wave_counter >= to_integer(unsigned(half_period)) then
-                    wave_counter <= 0;
-                    audio        <= not audio;
+                if sample >= 65535 then
+                    sample <= 0;
                 else
-                    wave_counter <= wave_counter + 1;
+                    sample <= sample + 606; -- TODO: should be division of period
                 end if;
+
+                audio(31 downto 16) <= std_logic_vector(to_unsigned(sample, 16));
+                audio(15 downto 0)  <= std_logic_vector(to_unsigned(sample, 16));
             end if;
         end if;
     end process osc;
