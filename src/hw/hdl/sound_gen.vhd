@@ -6,6 +6,10 @@
 -- author: Alexandre CHAU & Loïc DROZ
 -- date: 08/06/2020
 --
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 entity sound_gen is
     port (
         clk     : in std_logic;
@@ -78,7 +82,7 @@ begin
                 sclk_counter <= sclk_counter + 1;
                 sclk_en      <= '0';
             else
-                sclk_counter <= '0';
+                sclk_counter <= 0;
                 sclk_en      <= '1';
             end if;
         end if;
@@ -102,7 +106,7 @@ begin
 
                 when Q_SEND =>
                     if sample_bits_counter > 0 then
-                        sample_bits_counter = sample_bits_counter - 1;
+                        sample_bits_counter <= sample_bits_counter - 1;
                     elsif sample_bits_counter = 0 then
                         state <= Q_IDLE;
                     end if;
