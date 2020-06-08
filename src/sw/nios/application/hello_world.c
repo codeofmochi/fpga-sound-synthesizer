@@ -29,7 +29,7 @@ void i2c_configure(uint8_t address, uint16_t data) {
 	int busy;
 	do {
 		busy = IORD_32DIRECT(I2C_SLAVE_0_BASE, 12);
-		printf(busy ? "busy" : "free");
+		printf(busy ? "busy " : "free\n");
 	} while (busy);
 }
 

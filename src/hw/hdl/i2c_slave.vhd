@@ -65,7 +65,9 @@ architecture fsm of i2c_slave is
         Q_WAIT_MSB_ACK,
         Q_SEND_LSB,
         Q_WAIT_LSB_ACK,
-        Q_STOP
+        Q_STOP,
+        Q_DONE,
+        Q_END
     );
     signal state : state_type;
 begin
@@ -270,8 +272,17 @@ begin
                         sclk_en    <= '0';
                         i2c_sdat   <= '0';
                         debug_sdat <= '0';
-                        state      <= Q_IDLE;
                         pulse_done <= '1';
+                        state      <= Q_DONE;
+
+                    when Q_DONE =>
+                        -- de-assert done pulse
+                        pulse_done <= '0';
+                        state      <= Q_END;
+
+                    when Q_END =>
+                        -- wait for reg_busy to be 0
+                        state <= Q_IDLE;
 
                     when others =>
                         -- do nothing
