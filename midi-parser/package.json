@@ -1,0 +1,14 @@
+{
+  "name": "midi-parser",
+  "version": "1.0.0",
+  "description": "MIDI file parser for the FPGA sound synthesizer project",
+  "main": "parse.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexandre CHAU, Loïc DROZ",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "midi-parser-js": "^4.0.4"
+  }
+}
