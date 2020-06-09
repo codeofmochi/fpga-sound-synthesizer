@@ -40,6 +40,8 @@ header = f"""--
 -- difference between 2 samples at {DAC_FREQ} Hz and {DAC_DEPTH}-bit depth
 -- given a MIDI note code, computed from the frequency mapping of each note
 --
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py.
+--
 -- file:                linear_diff.vhd
 -- auto-generated from: linear_diff.py
 -- author:              Alexandre CHAU
@@ -53,7 +55,7 @@ entity = f"""
 entity linear_diff is
     port (
         midi_note_code   : in std_logic_vector(7 downto 0);
-        note_linear_diff : out unsigned({DAC_DEPTH} - 1 downto 0)
+        note_linear_diff : out unsigned({DAC_DEPTH - 1} downto 0)
     );
 end entity linear_diff;
 """
@@ -76,7 +78,9 @@ begin
                 note_linear_diff <= (others => '0');
         end case;
     end process mux;
-end architecture lut;"""
+end architecture lut;
+
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py."""
 
 vhdl = header + entity + architecture
 

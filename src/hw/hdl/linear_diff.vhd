@@ -4,6 +4,8 @@
 -- difference between 2 samples at 48000 Hz and 16-bit depth
 -- given a MIDI note code, computed from the frequency mapping of each note
 --
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py.
+--
 -- file:                linear_diff.vhd
 -- auto-generated from: linear_diff.py
 -- author:              Alexandre CHAU
@@ -15,7 +17,7 @@ use ieee.numeric_std.all;
 entity linear_diff is
     port (
         midi_note_code   : in std_logic_vector(7 downto 0);
-        note_linear_diff : out unsigned(16 - 1 downto 0)
+        note_linear_diff : out unsigned(15 downto 0)
     );
 end entity linear_diff;
 
@@ -383,3 +385,5 @@ begin
         end case;
     end process mux;
 end architecture lut;
+
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py.
