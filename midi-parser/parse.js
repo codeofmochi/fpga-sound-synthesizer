@@ -85,9 +85,11 @@ fs.readFile(file, 'base64', (err, data) => {
     }).filter(e => e !== null)
 
     // generate C array (IMPORTANT! Preserve spacing!)
+    const lengthVariableName = `${name}_length`.toUpperCase()
+    const arrayVariableName = `${name}`.toLowerCase()
     const code = `
-#define ${name}_LENGTH ${notes.length}
-struct note ${name}[${name}_LENGTH] = {
+#define ${lengthVariableName} ${notes.length}
+struct note ${arrayVariableName}[${lengthVariableName}] = {
 ${notes.map(n => `\t{${n.note.replace('#', 's')}, ${n.scale}, ${n.delta}}`).join(`,\n`)}
 };
 `
