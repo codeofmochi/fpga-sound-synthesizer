@@ -174,6 +174,20 @@ begin
                 debug_sclk <= '1';
             end if;
 
+            -- end states should be only one clk cycle long
+            case state is
+                when Q_DONE =>
+                    -- de-assert done pulse
+                    pulse_done <= '0';
+                    state      <= Q_END;
+
+                when Q_END =>
+                    -- wait for reg_busy to be 0
+                    state <= Q_IDLE;
+                when others =>
+                    null;
+            end case;
+
             -- wait for acks on high enable
             if high_en = '1' then
                 case state is
@@ -274,15 +288,6 @@ begin
                         debug_sdat <= '0';
                         pulse_done <= '1';
                         state      <= Q_DONE;
-
-                    when Q_DONE =>
-                        -- de-assert done pulse
-                        pulse_done <= '0';
-                        state      <= Q_END;
-
-                    when Q_END =>
-                        -- wait for reg_busy to be 0
-                        state <= Q_IDLE;
 
                     when others =>
                         -- do nothing
