@@ -51,7 +51,7 @@ function findDelta(events, index) {
  */
 
 function printUsage() {
-    console.log("Usage: node parse <MIDI file> <C variable name (ex: BACH_PRELUDE_C)>")
+    console.log("Usage: node parse <MIDI file> <C variable name> [Transpose shift (ex. -1)] [Duration scaling factor (ex: 0.8)")
 }
 
 if (process.argv[2] == null) {
@@ -68,6 +68,8 @@ if (process.argv[3] == null) {
 
 file = process.argv[2]
 name = process.argv[3]
+transpose = (process.argv[4] == null) ? 0 : parseInt(process.argv[4])
+scaling = (process.argv[5] == null ) ? 1 : parseFloat(process.argv[5])
 
 fs.readFile(file, 'base64', (err, data) => {
     const midi = midiParser.parse(data)
@@ -76,10 +78,13 @@ fs.readFile(file, 'base64', (err, data) => {
         // only consider note starts (type = 9)
         if (event.type !== NOTE_START_TYPE) return null
         else {
+            refNote = midiNotes[event.data[0]]
             // retrieve note value
-            const value = Object.assign({}, midiNotes[event.data[0]])
+            const value = Object.assign({}, refNote)
+            // transpose octave
+            value["scale"] = Math.min(Math.max(0, refNote["scale"] + transpose), 9)
             // attach time delta
-            value["delta"] = findDelta(track, i)
+            value["delta"] = Math.floor(findDelta(track, i) * scaling)
             return value
         }
     }).filter(e => e !== null)
