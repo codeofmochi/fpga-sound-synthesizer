@@ -10,6 +10,9 @@
 #ifndef MUSIC_H_
 #define MUSIC_H_
 
+#include <inttypes.h>
+#include <stdlib.h>
+
 /**
  * This enumeration maps the base scale A - G# to integers 0 - 11
  */
