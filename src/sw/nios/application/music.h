@@ -61,7 +61,7 @@ struct note base_scale[BASE_SCALE_LENGTH] = {
 /**
  * Piece: Bach Prelude in C Major
  */
-#define BACH_PRELUDE_C_LENGTH 160
+#define BACH_PRELUDE_C_LENGTH (34 * 16 + 1)
 #define BLEN 200 // TODO: rename to BACH_PRELUDE_C_SEMIQUAVER_LEN
 struct note bach_prelude_c[BACH_PRELUDE_C_LENGTH] = {
 		// bar 1
