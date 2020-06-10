@@ -100,7 +100,7 @@ osc_instances = [f"""
         osc_out   => osc{i}_out
     );""" for i in range (0, N_OSC)]
 
-mixer_osc = " + ".join([f"osc{i}_out" for i in range (0, N_OSC)])
+mixer_osc = " + ".join([f"resize(osc{i}_out, sample'length)" for i in range (0, N_OSC)])
 
 architecture = f"""
 architecture rtl of sound_gen is
@@ -178,6 +178,8 @@ begin
                                 -- find all oscillators playing this note and stop them
                                 -- if MIDI event is note OFF (0x80)
 {"".join(osc_select_stop)[1:]}
+                            when others =>
+                                null;
                         end case;
                     when others =>
                         null;

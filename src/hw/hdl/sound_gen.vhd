@@ -243,6 +243,8 @@ begin
                                     osc7_note_step <= to_unsigned(0, osc7_note_step'length);
                                 end if;
 
+                            when others =>
+                                null;
                         end case;
                     when others =>
                         null;
@@ -396,7 +398,7 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                sample <= osc0_out + osc1_out + osc2_out + osc3_out + osc4_out + osc5_out + osc6_out + osc7_out;
+                sample <= resize(osc0_out, sample'length) + resize(osc1_out, sample'length) + resize(osc2_out, sample'length) + resize(osc3_out, sample'length) + resize(osc4_out, sample'length) + resize(osc5_out, sample'length) + resize(osc6_out, sample'length) + resize(osc7_out, sample'length);
 
                 -- mix samples in mono: left and right channels get assigned the sample
                 audio(31 downto 16) <= std_logic_vector(sample);
