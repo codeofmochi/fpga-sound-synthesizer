@@ -95,6 +95,7 @@ osc_instances = [f"""
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc{i}_note,
         note_step => osc{i}_note_step,
         osc_out   => osc{i}_out
     );""" for i in range (0, N_OSC)]
@@ -140,6 +141,7 @@ architecture rtl of sound_gen is
             sclk_en   : in std_logic;
             reset_n   : in std_logic;
             reg_on    : in std_logic;
+            note      : in std_logic_vector(31 downto 0);
             note_step : in unsigned({OSC_DEPTH - 1} downto 0);
             osc_out   : out signed({OSC_DEPTH - 1} downto 0)
         );

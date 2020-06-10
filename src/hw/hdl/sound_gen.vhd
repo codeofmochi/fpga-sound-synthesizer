@@ -72,6 +72,7 @@ architecture rtl of sound_gen is
             sclk_en   : in std_logic;
             reset_n   : in std_logic;
             reg_on    : in std_logic;
+            note      : in std_logic_vector(31 downto 0);
             note_step : in unsigned(12 downto 0);
             osc_out   : out signed(12 downto 0)
         );
@@ -311,6 +312,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc0_note,
         note_step => osc0_note_step,
         osc_out   => osc0_out
     );
@@ -320,6 +322,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc1_note,
         note_step => osc1_note_step,
         osc_out   => osc1_out
     );
@@ -329,6 +332,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc2_note,
         note_step => osc2_note_step,
         osc_out   => osc2_out
     );
@@ -338,6 +342,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc3_note,
         note_step => osc3_note_step,
         osc_out   => osc3_out
     );
@@ -347,6 +352,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc4_note,
         note_step => osc4_note_step,
         osc_out   => osc4_out
     );
@@ -356,6 +362,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc5_note,
         note_step => osc5_note_step,
         osc_out   => osc5_out
     );
@@ -365,6 +372,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc6_note,
         note_step => osc6_note_step,
         osc_out   => osc6_out
     );
@@ -374,6 +382,7 @@ begin
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
+        note      => osc7_note,
         note_step => osc7_note_step,
         osc_out   => osc7_out
     );
