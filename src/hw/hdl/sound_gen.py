@@ -9,15 +9,16 @@ import math
 import datetime
 
 # Configure DAC properties here
-DAC_FREQ = 48000
-DAC_DEPTH = 16
+DAC_FREQ = 96000
+DAC_DEPTH = 32
 N_OSC = 8
+PLL_CLOCK_FREQ = 12000000
 
 # Derived properties
 DAC_MAX_SIGNED_INT = (2 ** (DAC_DEPTH - 1) - 1)
 DAC_MIN_SIGNED_INT = -(2 ** (DAC_DEPTH - 1))
+OSC_DEPTH = DAC_DEPTH
 OSC_RANGE = int(math.floor((DAC_MAX_SIGNED_INT - DAC_MIN_SIGNED_INT) / N_OSC))
-OSC_DEPTH = math.ceil(math.log(OSC_RANGE, 2))
 OSC_MAX = int(math.floor(OSC_RANGE / 2))
 OSC_MIN = -OSC_MAX
 
@@ -52,7 +53,7 @@ entity sound_gen is
         as_writedata : in std_logic_vector(31 downto 0);
 
         -- WM8731 audio codec
-        aud_clk12   : in std_logic; -- This clock MUST be at 12 MHz to ensure 48 KHz sample rate
+        aud_clk12   : in std_logic; -- This clock MUST be at 12 MHz to ensure {DAC_FREQ} Hz sample rate
         aud_daclrck : out std_logic;
         aud_dacdat  : out std_logic;
 
@@ -100,7 +101,7 @@ osc_instances = [f"""
         osc_out   => osc{i}_out
     );""" for i in range (0, N_OSC)]
 
-mixer_osc = " + ".join([f"resize(osc{i}_out, sample'length)" for i in range (0, N_OSC)])
+mixer_osc = " + ".join([f"osc{i}_out" for i in range (0, N_OSC)])
 
 architecture = f"""
 architecture rtl of sound_gen is
@@ -112,18 +113,18 @@ architecture rtl of sound_gen is
     -- internal register
     signal reg_on : std_logic;
 
-    -- slow clock at 48 KHz
-    signal sclk_counter : integer range 0 to 255;
+    -- slow clock at {DAC_FREQ} Hz
+    signal sclk_counter : integer range 0 to {2 ** int(math.ceil(math.log2(PLL_CLOCK_FREQ / DAC_FREQ))) - 1};
     signal sclk_en      : std_logic;
 
     -- sound transfer fsm
     type state_type is (Q_IDLE, Q_SEND);
     signal state               : state_type;
-    signal sample_bits_counter : integer range 0 to 31;
+    signal sample_bits_counter : integer range 0 to {2 * DAC_DEPTH - 1};
 
     -- final audio sample (sample is mono, audio is stereo)
-    signal audio  : std_logic_vector(31 downto 0);
-    signal sample : signed(15 downto 0);
+    signal audio  : std_logic_vector({2 * DAC_DEPTH - 1} downto 0);
+    signal sample : signed({DAC_DEPTH - 1} downto 0);
 
     -- linear diff lookup table
     signal linear_diff_result : unsigned({OSC_DEPTH - 1} downto 0);
@@ -168,6 +169,8 @@ begin
                         reg_on <= '1';
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
+{"".join(osc_registers_resets)[1:].replace("            ", "                        ")}
+
                     when REG_MIDI_MSG_OFFSET =>
                         case to_integer(unsigned(as_writedata(23 downto 16))) is
                             when 16#90# =>
@@ -188,7 +191,7 @@ begin
         end if;
     end process as_write_process;
 
-    -- generates the 48 KHz pulse slow "clock"
+    -- generates the {DAC_FREQ} Hz pulse slow "clock"
     sclk_gen : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
@@ -201,7 +204,7 @@ begin
             aud_daclrck   <= sclk_en and reg_on;
             debug_daclrck <= sclk_en and reg_on;
 
-            if (sclk_counter < 250) then
+            if (sclk_counter < {int(math.floor(PLL_CLOCK_FREQ / DAC_FREQ))}) then
                 sclk_counter <= sclk_counter + 1;
                 sclk_en      <= '0';
             else
@@ -224,7 +227,7 @@ begin
             case state is
                 when Q_IDLE =>
                     if reg_on = '1' and sclk_en = '1' then
-                        sample_bits_counter <= 31;
+                        sample_bits_counter <= {2 * DAC_DEPTH - 1};
                         state               <= Q_SEND;
                     end if;
 
@@ -255,9 +258,9 @@ begin
             if reg_on = '1' and sclk_en = '1' then
                 sample <= {mixer_osc};
 
-                -- mix samples in mono: left and right channels get assigned the sample
-                audio(31 downto 16) <= std_logic_vector(sample);
-                audio(15 downto 0)  <= std_logic_vector(sample);
+                -- mix samples in mono: left and right channels get assigned the same sample
+                audio({2 * DAC_DEPTH - 1} downto {DAC_DEPTH}) <= std_logic_vector(sample);
+                audio({DAC_DEPTH - 1} downto 0)  <= std_logic_vector(sample);
             end if;
         end if;
     end process mixer;

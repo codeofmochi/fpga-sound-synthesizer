@@ -23,14 +23,14 @@ entity osc is
         reg_on : in std_logic;
         -- notes register for this osc
         note      : in std_logic_vector(31 downto 0);
-        note_step : in unsigned(12 downto 0);
+        note_step : in unsigned(31 downto 0);
         -- output sample
-        osc_out : out signed(12 downto 0)
+        osc_out : out signed(31 downto 0)
     );
 end entity osc;
 
 architecture arith of osc is
-    signal sample : signed(31 downto 0); -- full 32-bit register to allow clipping
+    signal sample : signed(63 downto 0); -- full 64-bit register to allow clipping
 begin
     saw_gen : process (aud_clk12, reset_n)
     begin
@@ -39,11 +39,14 @@ begin
             osc_out <= to_signed(0, osc_out'length);
 
         elsif falling_edge(aud_clk12) then
-            if reg_on = '1' and sclk_en = '1' then
-                if to_integer(unsigned(note(15 downto 8))) = 0 then
+            if sclk_en = '1' then
+                -- stop sound if device has been stopped or note is 0
+                if reg_on = '0' or to_integer(unsigned(note(15 downto 8))) = 0 then
                     sample <= to_signed(0, sample'length);
-                elsif to_integer(sample) >= 4095 then
-                    sample <= to_signed(-4095, sample'length);
+                -- max value for this oscillator reached, go to min value
+                elsif to_integer(sample) >= 268435455 then
+                    sample <= to_signed(-268435455, sample'length);
+                -- saw wave: simply increment the sample rate
                 else
                     sample <= sample + signed(std_logic_vector(note_step));
                 end if;

@@ -24,7 +24,7 @@ entity sound_gen is
         as_writedata : in std_logic_vector(31 downto 0);
 
         -- WM8731 audio codec
-        aud_clk12   : in std_logic; -- This clock MUST be at 12 MHz to ensure 48 KHz sample rate
+        aud_clk12   : in std_logic; -- This clock MUST be at 12 MHz to ensure 96000 Hz sample rate
         aud_daclrck : out std_logic;
         aud_dacdat  : out std_logic;
 
@@ -43,25 +43,25 @@ architecture rtl of sound_gen is
     -- internal register
     signal reg_on : std_logic;
 
-    -- slow clock at 48 KHz
-    signal sclk_counter : integer range 0 to 255;
+    -- slow clock at 96000 Hz
+    signal sclk_counter : integer range 0 to 127;
     signal sclk_en      : std_logic;
 
     -- sound transfer fsm
     type state_type is (Q_IDLE, Q_SEND);
     signal state               : state_type;
-    signal sample_bits_counter : integer range 0 to 31;
+    signal sample_bits_counter : integer range 0 to 63;
 
     -- final audio sample (sample is mono, audio is stereo)
-    signal audio  : std_logic_vector(31 downto 0);
-    signal sample : signed(15 downto 0);
+    signal audio  : std_logic_vector(63 downto 0);
+    signal sample : signed(31 downto 0);
 
     -- linear diff lookup table
-    signal linear_diff_result : unsigned(12 downto 0);
+    signal linear_diff_result : unsigned(31 downto 0);
     component linear_diff
         port (
             midi_note_code   : in std_logic_vector(7 downto 0);
-            note_linear_diff : out unsigned(12 downto 0)
+            note_linear_diff : out unsigned(31 downto 0)
         );
     end component linear_diff;
 
@@ -73,43 +73,43 @@ architecture rtl of sound_gen is
             reset_n   : in std_logic;
             reg_on    : in std_logic;
             note      : in std_logic_vector(31 downto 0);
-            note_step : in unsigned(12 downto 0);
-            osc_out   : out signed(12 downto 0)
+            note_step : in unsigned(31 downto 0);
+            osc_out   : out signed(31 downto 0)
         );
     end component osc;
 
     -- registers for oscillator instance osc0
-    signal osc0_note_step : unsigned(12 downto 0);
+    signal osc0_note_step : unsigned(31 downto 0);
     signal osc0_note      : std_logic_vector(31 downto 0);
-    signal osc0_out       : signed(12 downto 0);
+    signal osc0_out       : signed(31 downto 0);
     -- registers for oscillator instance osc1
-    signal osc1_note_step : unsigned(12 downto 0);
+    signal osc1_note_step : unsigned(31 downto 0);
     signal osc1_note      : std_logic_vector(31 downto 0);
-    signal osc1_out       : signed(12 downto 0);
+    signal osc1_out       : signed(31 downto 0);
     -- registers for oscillator instance osc2
-    signal osc2_note_step : unsigned(12 downto 0);
+    signal osc2_note_step : unsigned(31 downto 0);
     signal osc2_note      : std_logic_vector(31 downto 0);
-    signal osc2_out       : signed(12 downto 0);
+    signal osc2_out       : signed(31 downto 0);
     -- registers for oscillator instance osc3
-    signal osc3_note_step : unsigned(12 downto 0);
+    signal osc3_note_step : unsigned(31 downto 0);
     signal osc3_note      : std_logic_vector(31 downto 0);
-    signal osc3_out       : signed(12 downto 0);
+    signal osc3_out       : signed(31 downto 0);
     -- registers for oscillator instance osc4
-    signal osc4_note_step : unsigned(12 downto 0);
+    signal osc4_note_step : unsigned(31 downto 0);
     signal osc4_note      : std_logic_vector(31 downto 0);
-    signal osc4_out       : signed(12 downto 0);
+    signal osc4_out       : signed(31 downto 0);
     -- registers for oscillator instance osc5
-    signal osc5_note_step : unsigned(12 downto 0);
+    signal osc5_note_step : unsigned(31 downto 0);
     signal osc5_note      : std_logic_vector(31 downto 0);
-    signal osc5_out       : signed(12 downto 0);
+    signal osc5_out       : signed(31 downto 0);
     -- registers for oscillator instance osc6
-    signal osc6_note_step : unsigned(12 downto 0);
+    signal osc6_note_step : unsigned(31 downto 0);
     signal osc6_note      : std_logic_vector(31 downto 0);
-    signal osc6_out       : signed(12 downto 0);
+    signal osc6_out       : signed(31 downto 0);
     -- registers for oscillator instance osc7
-    signal osc7_note_step : unsigned(12 downto 0);
+    signal osc7_note_step : unsigned(31 downto 0);
     signal osc7_note      : std_logic_vector(31 downto 0);
-    signal osc7_out       : signed(12 downto 0);
+    signal osc7_out       : signed(31 downto 0);
 begin
     -- instantiate linear diff computation
     linear_diff0 : linear_diff port map(
@@ -146,6 +146,23 @@ begin
                         reg_on <= '1';
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
+                        osc0_note      <= (others => '0');
+                        osc0_note_step <= to_unsigned(0, osc0_note_step'length);
+                        osc1_note      <= (others => '0');
+                        osc1_note_step <= to_unsigned(0, osc1_note_step'length);
+                        osc2_note      <= (others => '0');
+                        osc2_note_step <= to_unsigned(0, osc2_note_step'length);
+                        osc3_note      <= (others => '0');
+                        osc3_note_step <= to_unsigned(0, osc3_note_step'length);
+                        osc4_note      <= (others => '0');
+                        osc4_note_step <= to_unsigned(0, osc4_note_step'length);
+                        osc5_note      <= (others => '0');
+                        osc5_note_step <= to_unsigned(0, osc5_note_step'length);
+                        osc6_note      <= (others => '0');
+                        osc6_note_step <= to_unsigned(0, osc6_note_step'length);
+                        osc7_note      <= (others => '0');
+                        osc7_note_step <= to_unsigned(0, osc7_note_step'length);
+
                     when REG_MIDI_MSG_OFFSET =>
                         case to_integer(unsigned(as_writedata(23 downto 16))) is
                             when 16#90# =>
@@ -253,7 +270,7 @@ begin
         end if;
     end process as_write_process;
 
-    -- generates the 48 KHz pulse slow "clock"
+    -- generates the 96000 Hz pulse slow "clock"
     sclk_gen : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
@@ -266,7 +283,7 @@ begin
             aud_daclrck   <= sclk_en and reg_on;
             debug_daclrck <= sclk_en and reg_on;
 
-            if (sclk_counter < 250) then
+            if (sclk_counter < 125) then
                 sclk_counter <= sclk_counter + 1;
                 sclk_en      <= '0';
             else
@@ -289,7 +306,7 @@ begin
             case state is
                 when Q_IDLE =>
                     if reg_on = '1' and sclk_en = '1' then
-                        sample_bits_counter <= 31;
+                        sample_bits_counter <= 63;
                         state               <= Q_SEND;
                     end if;
 
@@ -398,11 +415,11 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                sample <= resize(osc0_out, sample'length) + resize(osc1_out, sample'length) + resize(osc2_out, sample'length) + resize(osc3_out, sample'length) + resize(osc4_out, sample'length) + resize(osc5_out, sample'length) + resize(osc6_out, sample'length) + resize(osc7_out, sample'length);
+                sample <= osc0_out + osc1_out + osc2_out + osc3_out + osc4_out + osc5_out + osc6_out + osc7_out;
 
-                -- mix samples in mono: left and right channels get assigned the sample
-                audio(31 downto 16) <= std_logic_vector(sample);
-                audio(15 downto 0)  <= std_logic_vector(sample);
+                -- mix samples in mono: left and right channels get assigned the same sample
+                audio(63 downto 32) <= std_logic_vector(sample);
+                audio(31 downto 0)  <= std_logic_vector(sample);
             end if;
         end if;
     end process mixer;

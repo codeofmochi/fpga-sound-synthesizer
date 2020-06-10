@@ -43,7 +43,7 @@ end entity osc;
 
 architecture = f"""
 architecture arith of osc is
-    signal sample : signed(31 downto 0); -- full 32-bit register to allow clipping
+    signal sample : signed({OSC_DEPTH * 2 - 1} downto 0); -- full {OSC_DEPTH * 2}-bit register to allow clipping
 begin
     saw_gen : process (aud_clk12, reset_n)
     begin
@@ -52,11 +52,14 @@ begin
             osc_out <= to_signed(0, osc_out'length);
 
         elsif falling_edge(aud_clk12) then
-            if reg_on = '1' and sclk_en = '1' then
-                if to_integer(unsigned(note(15 downto 8))) = 0 then
+            if sclk_en = '1' then
+                -- stop sound if device has been stopped or note is 0
+                if reg_on = '0' or to_integer(unsigned(note(15 downto 8))) = 0 then
                     sample <= to_signed(0, sample'length);
+                -- max value for this oscillator reached, go to min value
                 elsif to_integer(sample) >= {OSC_MAX} then
                     sample <= to_signed({OSC_MIN}, sample'length);
+                -- saw wave: simply increment the sample rate
                 else
                     sample <= sample + signed(std_logic_vector(note_step));
                 end if;

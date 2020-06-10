@@ -25,12 +25,12 @@ void setup_audio_codec() {
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0001001111111111);
 	// ADC off, DAC on, Line Out on, Power on
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0000110000000111);
-	// DSP, 16-bit, slave mode
-	i2c_configure(WM8731_I2C_ADDRESS, 0b0000111000010011);
+	// DSP, 32-bit depth, slave mode
+	i2c_configure(WM8731_I2C_ADDRESS, 0b0000111000011111);
 	// Headphone volume
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0000010101111001);
-	// USB mode
-	i2c_configure(WM8731_I2C_ADDRESS, 0b0001000000000001);
+	// USB mode, 96 KHz sample rate
+	i2c_configure(WM8731_I2C_ADDRESS, 0b0001000000011101);
 	// DAC to Line Out
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0000100000010010);
 	// unmute DAC
