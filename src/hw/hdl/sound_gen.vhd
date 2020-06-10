@@ -39,7 +39,7 @@ architecture fsm of sound_gen is
 
     -- internal register
     signal reg_on    : std_logic;
-    signal note_step : unsigned(15 downto 0);
+    signal note_step : unsigned(15 downto 0); -- TODO: width scale with 1/# instances osc
 
     -- slow clock at 48 KHz
     signal sclk_counter : integer range 0 to 255;
@@ -50,9 +50,9 @@ architecture fsm of sound_gen is
     signal state               : state_type;
     signal sample_bits_counter : integer range 0 to 31;
 
-    -- oscillator
+    -- final audio sample (sample is mono, audio is stereo)
     signal audio  : std_logic_vector(31 downto 0);
-    signal sample : integer range 0 to integer'high;
+    signal sample : signed(15 downto 0);
 
     -- linear diff lookup table
     signal linear_diff_result : unsigned(15 downto 0);
@@ -62,6 +62,20 @@ architecture fsm of sound_gen is
             note_linear_diff : out unsigned(15 downto 0)
         );
     end component linear_diff;
+
+    -- oscillator instance
+    signal osc_out : signed(15 downto 0); -- TODO: width scale with 1/# instances osc
+    component osc
+        port (
+            aud_clk12 : in std_logic;
+            sclk_en   : in std_logic;
+            reset_n   : in std_logic;
+            reg_on    : in std_logic;
+            note_step : in unsigned(15 downto 0); -- TODO: width scale with 1/# instances osc
+
+            osc_out : out signed(15 downto 0) -- TODO: width scale with 1/# instances osc
+        );
+    end component osc;
 begin
     -- instantiate linear diff computation
     linear_diff_instance : linear_diff port map(
@@ -119,8 +133,8 @@ begin
         end if;
     end process sclk_gen;
 
-    -- generate sound to audio output
-    sound_fsm : process (aud_clk12, reset_n)
+    -- transfer sound to audio output through DAC
+    transfer_fsm : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
             aud_dacdat          <= '0';
@@ -149,27 +163,34 @@ begin
                     null;
             end case;
         end if;
-    end process sound_fsm;
+    end process transfer_fsm;
 
-    -- generates a sound at the given note frequency
-    osc : process (aud_clk12, reset_n)
+    -- instantiate oscillator
+    osc0 : osc port map(
+        aud_clk12 => aud_clk12,
+        sclk_en   => sclk_en,
+        reset_n   => reset_n,
+        reg_on    => reg_on,
+        note_step => note_step,
+        osc_out   => osc_out
+    );
+
+    -- mixes sound from generators into the final audio sample
+    mixer : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
             audio  <= (others => '0');
-            sample <= 0;
+            sample <= to_signed(0, sample'length);
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                if sample >= 65535 then
-                    sample <= 0;
-                else
-                    sample <= sample + to_integer(note_step);
-                end if;
+                sample <= osc_out; -- TODO: sum oscillators here
 
-                audio(31 downto 16) <= std_logic_vector(to_unsigned(sample, 16));
-                audio(15 downto 0)  <= std_logic_vector(to_unsigned(sample, 16));
+                -- mix samples in mono: left and right channels get assigned the sample
+                audio(31 downto 16) <= std_logic_vector(sample);
+                audio(15 downto 0)  <= std_logic_vector(sample);
             end if;
         end if;
-    end process osc;
+    end process mixer;
 
 end architecture fsm;
