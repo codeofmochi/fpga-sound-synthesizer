@@ -20,6 +20,7 @@ const range = (start, end) => {
 /**
  * Music and MIDI helpers
  */
+const NOTE_STOP_TYPE = 8
 const NOTE_START_TYPE = 9
 
 // Enumerate possible tones
@@ -39,7 +40,7 @@ function findDelta(events, index) {
     // must find distance to next note start by aggregating deltaTimes
     // if last (i.e. no note start is found afterwards, it must be 0)
     const eventsLeft = events.slice(index + 1, events.length)
-    const nextIndex = eventsLeft.findIndex(e => e.type === NOTE_START_TYPE)
+    const nextIndex = eventsLeft.findIndex(e => e.type === NOTE_START_TYPE || e.type === NOTE_STOP_TYPE)
     if (nextIndex === -1) return 0
     else {
         return eventsLeft.slice(0, nextIndex + 1).reduce((acc, curr) => acc + curr.deltaTime, 0)
@@ -66,17 +67,17 @@ if (process.argv[3] == null) {
     return
 }
 
-file = process.argv[2]
-name = process.argv[3]
-transpose = (process.argv[4] == null) ? 0 : parseInt(process.argv[4])
-scaling = (process.argv[5] == null ) ? 1 : parseFloat(process.argv[5])
+const file = process.argv[2]
+const name = process.argv[3]
+const transpose = (process.argv[4] == null) ? 0 : parseInt(process.argv[4])
+const scaling = (process.argv[5] == null ) ? 1 : parseFloat(process.argv[5])
 
 fs.readFile(file, 'base64', (err, data) => {
     const midi = midiParser.parse(data)
     const track = midi.track[0].event
     const notes = track.map((event, i) => {
-        // only consider note starts (type = 9)
-        if (event.type !== NOTE_START_TYPE) return null
+        // only consider note events
+        if (event.type !== NOTE_START_TYPE && event.type !== NOTE_STOP_TYPE) return null
         else {
             refNote = midiNotes[event.data[0]]
             // retrieve note value
@@ -85,6 +86,8 @@ fs.readFile(file, 'base64', (err, data) => {
             value["scale"] = Math.min(Math.max(0, refNote["scale"] + transpose), 9)
             // attach time delta
             value["delta"] = Math.floor(findDelta(track, i) * scaling)
+            // attach event type
+            value["type"] = event.type
             return value
         }
     }).filter(e => e !== null)
@@ -95,7 +98,7 @@ fs.readFile(file, 'base64', (err, data) => {
     const code = `
 #define ${lengthVariableName} ${notes.length}
 struct note ${arrayVariableName}[${lengthVariableName}] = {
-${notes.map(n => `\t{${n.note.replace('#', 's')}, ${n.scale}, ${n.delta}}`).join(`,\n`)}
+${notes.map(n => `\t{ ${n.type === NOTE_START_TYPE ? "NOTE_START" : "NOTE_STOP"} | ${n.note.replace('#', 's')}${n.scale}, ${n.delta}}`).join(`,\n`)}
 };
 `
     fs.writeFileSync(`${file}.converted.c`, code, {encoding: 'utf8'})
