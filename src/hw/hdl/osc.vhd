@@ -22,9 +22,9 @@ entity osc is
         -- global on/off register
         reg_on : in std_logic;
         -- note_step register for this osc
-        note_step : in unsigned(15 downto 0);
+        note_step : in unsigned(12 downto 0);
         -- output sample
-        osc_out : out signed(15 downto 0)
+        osc_out : out signed(12 downto 0)
     );
 end entity osc;
 
@@ -39,8 +39,8 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                if to_integer(sample) >= 32767 then
-                    sample <= to_signed(-32767, sample'length);
+                if to_integer(sample) >= 4095 then
+                    sample <= to_signed(-4095, sample'length);
                 else
                     sample <= sample + signed(std_logic_vector(note_step));
                 end if;

@@ -11,7 +11,7 @@ import datetime
 # Configure DAC properties here
 DAC_FREQ = 48000
 DAC_DEPTH = 16
-N_OSC = 1
+N_OSC = 8
 
 # Derived properties
 DAC_MAX_SIGNED_INT = (2 ** (DAC_DEPTH - 1) - 1)
@@ -63,19 +63,33 @@ entity sound_gen is
 end entity sound_gen;
 """
 
-osc_registers = [f"""-- registers for oscillator instance osc{i}
+osc_registers = [f"""
+    -- registers for oscillator instance osc{i}
     signal osc{i}_note_step : unsigned({OSC_DEPTH - 1} downto 0);
     signal osc{i}_note      : std_logic_vector(31 downto 0);
     signal osc{i}_out       : signed({OSC_DEPTH - 1} downto 0);""" for i in range(0, N_OSC)]
 
-osc_registers_resets = [f"""osc{i}_note      <= (others => '0');
+osc_registers_resets = [f"""
+            osc{i}_note      <= (others => '0');
             osc{i}_note_step <= to_unsigned(0, osc{i}_note_step'length);""" for i in range(0, N_OSC)]
 
-osc_select = [f"""-- select osc{i}
-                            osc{i}_note      <= as_writedata;
-                            osc{i}_note_step <= linear_diff_result;""" for i in range(0, N_OSC)]
+osc_select_start = [f"""
+                                {"els" if i != 0 else ""}if to_integer(unsigned(osc{i}_note(15 downto 8))) = 0 then
+                                    -- this osc{i} is empty, play the note on it
+                                    osc{i}_note      <= as_writedata;
+                                    osc{i}_note_step <= linear_diff_result;
+""" for i in range(0, N_OSC)] + ["\n                                end if;"]
 
-osc_instances = [f"""-- oscillator osc{i} instance
+osc_select_stop = [f"""
+                                if osc{i}_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc{i} is playing this note, stop it
+                                    osc{i}_note      <= (others => '0');
+                                    osc{i}_note_step <= to_unsigned(0, osc{i}_note_step'length);
+                                end if;
+""" for i in range(0, N_OSC)]
+
+osc_instances = [f"""
+    -- oscillator osc{i} instance
     osc{i} : osc port map(
         aud_clk12 => aud_clk12,
         sclk_en   => sclk_en,
@@ -130,8 +144,7 @@ architecture rtl of sound_gen is
             osc_out   : out signed({OSC_DEPTH - 1} downto 0)
         );
     end component osc;
-
-    {"".join(osc_registers)}
+{"".join(osc_registers)}
 begin
     -- instantiate linear diff computation
     linear_diff0 : linear_diff port map(
@@ -144,7 +157,7 @@ begin
     begin
         if reset_n = '0' then
             reg_on         <= '0';
-            {"".join(osc_registers_resets)}
+{"".join(osc_registers_resets)[1:]}
 
         elsif rising_edge(clk) then
             if as_write = '1' then
@@ -154,11 +167,16 @@ begin
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
                     when REG_MIDI_MSG_OFFSET =>
-                        -- save note_step if MIDI event is note on (0x90)
-                        -- TODO: implement OSC selection
-                        if to_integer(unsigned(as_writedata(23 downto 16))) = 16#90# then
-                            {"".join(osc_select)}
-                        end if;
+                        case to_integer(unsigned(as_writedata(23 downto 16))) is
+                            when 16#90# =>
+                                -- save note_step if MIDI event is note ON (0x90)
+{"".join(osc_select_start)[1:]}
+
+                            when 16#80# =>
+                                -- find all oscillators playing this note and stop them
+                                -- if MIDI event is note OFF (0x80)
+{"".join(osc_select_stop)[1:]}
+                        end case;
                     when others =>
                         null;
                 end case;
@@ -220,8 +238,7 @@ begin
             end case;
         end if;
     end process transfer_fsm;
-
-    {"".join(osc_instances)}
+{"".join(osc_instances)}
 
     -- mixes sound from generators into the final audio sample
     mixer : process (aud_clk12, reset_n)
