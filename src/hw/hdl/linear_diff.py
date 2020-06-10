@@ -1,20 +1,18 @@
 #
 # This file is a helper to generate the linear diff lookup table VHDL component
 # a combinatorial lookup table that provides the linear difference between 2
-# samples at {DAC_FREQ} Hz and {OSC_DEPTH}-bit depth given a MIDI note code,
+# samples at {DAC_FREQ} Hz and {OSC_RANGE} range given a MIDI note code,
 # computed from the frequency mapping of each note
 #
 # file:         linear_diff.py
 # generates:    linear_diff.vhd
 # author:       Alexandre CHAU
-
-# Configure DAC properties here
-DAC_FREQ = 48000
-OSC_DEPTH = 16
+import math
+import datetime
+from sound_gen import DAC_FREQ, OSC_RANGE
 
 # Compute frequencies from MIDI note number
 # From https://www.audiolabs-erlangen.de/resources/MIR/FMP/C1/C1S3_CenterFrequencyMIDI.html
-PCM_MAX_INT = 2 ** OSC_DEPTH - 1
 DAC_DELTA = 1 / DAC_FREQ
 
 midi_range = range(21, 109)
@@ -25,9 +23,9 @@ periods_in_samples = [p / DAC_DELTA for p in periods]
 chroma = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 tones = [chroma[(note-69) % 12] + str(note//12-1) for note in midi_range]
 
-# Compute linear difference for each sample to iterate 0 to PCM_MAX_INT at the note frequency
+# Compute linear difference for each sample to iterate 0 to OSC_RANGE at the note frequency
 # Useful to compute saw tooth wave for instance
-linear_diffs = [int(round(PCM_MAX_INT / ps)) for ps in periods_in_samples]
+linear_diffs = [int(round(OSC_RANGE / ps)) for ps in periods_in_samples]
 
 
 # From here: section to generate VHDL code
@@ -37,13 +35,14 @@ midi_tone_diffs = list(zip(midi_range, tones, pretty_freqs, linear_diffs))
 header = f"""--
 -- Linear diff lookup table
 -- This entity is a combinatorial lookup table that provides the linear
--- difference between 2 samples at {DAC_FREQ} Hz and {OSC_DEPTH}-bit depth
+-- difference between 2 samples at {DAC_FREQ} Hz and {OSC_RANGE} range
 -- given a MIDI note code, computed from the frequency mapping of each note
 --
 -- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py.
 --
 -- file:                linear_diff.vhd
 -- auto-generated from: linear_diff.py
+-- last generated:      {datetime.date.today()}
 -- author:              Alexandre CHAU
 --
 library ieee;
@@ -55,7 +54,7 @@ entity = f"""
 entity linear_diff is
     port (
         midi_note_code   : in std_logic_vector(7 downto 0);
-        note_linear_diff : out unsigned({OSC_DEPTH - 1} downto 0)
+        note_linear_diff : out unsigned({math.ceil(math.log(OSC_RANGE, 2)) - 1} downto 0)
     );
 end entity linear_diff;
 """

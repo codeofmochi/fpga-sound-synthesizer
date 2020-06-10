@@ -1,13 +1,14 @@
 --
 -- Linear diff lookup table
 -- This entity is a combinatorial lookup table that provides the linear
--- difference between 2 samples at 48000 Hz and 16-bit depth
+-- difference between 2 samples at 48000 Hz and 65535 range
 -- given a MIDI note code, computed from the frequency mapping of each note
 --
 -- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE linear_diff.py.
 --
 -- file:                linear_diff.vhd
 -- auto-generated from: linear_diff.py
+-- last generated:      2020-06-10
 -- author:              Alexandre CHAU
 --
 library ieee;
