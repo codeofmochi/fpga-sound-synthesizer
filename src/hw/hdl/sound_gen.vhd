@@ -33,13 +33,13 @@ end entity sound_gen;
 
 architecture fsm of sound_gen is
     -- register map
-    constant REG_START_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "00";
-    constant REG_STOP_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "01";
-    constant REG_NOTE_OFFSET  : std_logic_vector(as_address'length - 1 downto 0) := "10";
+    constant REG_START_OFFSET    : std_logic_vector(as_address'length - 1 downto 0) := "00";
+    constant REG_STOP_OFFSET     : std_logic_vector(as_address'length - 1 downto 0) := "01";
+    constant REG_MIDI_MSG_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
 
     -- internal register
     signal reg_on    : std_logic;
-    signal note_step : unsigned(31 downto 0);
+    signal note_step : unsigned(15 downto 0);
 
     -- slow clock at 48 KHz
     signal sclk_counter : integer range 0 to 255;
@@ -53,7 +53,22 @@ architecture fsm of sound_gen is
     -- oscillator
     signal audio  : std_logic_vector(31 downto 0);
     signal sample : integer range 0 to integer'high;
+
+    -- linear diff lookup table
+    signal linear_diff_result : unsigned(15 downto 0);
+    component linear_diff
+        port (
+            midi_note_code   : in std_logic_vector(7 downto 0);
+            note_linear_diff : out unsigned(15 downto 0)
+        );
+    end component linear_diff;
 begin
+    -- instantiate linear diff computation
+    linear_diff_instance : linear_diff port map(
+        midi_note_code   => as_writedata(15 downto 8),
+        note_linear_diff => linear_diff_result
+    );
+
     -- writes to the status registers on Avalon writes
     as_write_process : process (clk, reset_n)
         variable octave_shift : integer range -3 to 2;
@@ -69,114 +84,11 @@ begin
                         reg_on <= '1';
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
-                    when REG_NOTE_OFFSET =>
-                        octave_shift := to_integer(unsigned(as_writedata(6 downto 4))) - 5;
-                        -- if note is A, A# or B, must compensate for lower octave 
-                        if to_integer(unsigned(as_writedata(3 downto 0))) <= 2 then
-                            octave_shift := octave_shift + 1;
+                    when REG_MIDI_MSG_OFFSET =>
+                        -- save note_step if MIDI event is note on (0x90)
+                        if to_integer(unsigned(as_writedata(23 downto 16))) = 16#90# then
+                            note_step <= linear_diff_result;
                         end if;
-
-                        -- assign note step given shift and sample value delta
-                        case to_integer(unsigned(as_writedata(3 downto 0))) is
-                            when 0 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(601, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(601, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(601, note_step'length);
-                                end if;
-                            when 1 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(636, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(636, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(636, note_step'length);
-                                end if;
-                            when 2 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(674, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(674, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(674, note_step'length);
-                                end if;
-                            when 3 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(714, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(714, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(714, note_step'length);
-                                end if;
-                            when 4 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(757, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(757, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(757, note_step'length);
-                                end if;
-                            when 5 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(802, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(802, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(802, note_step'length);
-                                end if;
-                            when 6 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(850, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(850, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(850, note_step'length);
-                                end if;
-                            when 7 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(900, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(900, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(900, note_step'length);
-                                end if;
-                            when 8 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(954, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(954, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(954, note_step'length);
-                                end if;
-                            when 9 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(1010, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(1010, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(1010, note_step'length);
-                                end if;
-                            when 10 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(1070, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(1070, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(1070, note_step'length);
-                                end if;
-                            when 11 =>
-                                if octave_shift < 0 then
-                                    note_step <= shift_right(to_unsigned(1134, note_step'length), 0 - octave_shift);
-                                elsif octave_shift > 0 then
-                                    note_step <= shift_left(to_unsigned(1134, note_step'length), octave_shift);
-                                else
-                                    note_step <= to_unsigned(1134, note_step'length);
-                                end if;
-                            when others =>
-                                note_step <= to_unsigned(0, note_step'length);
-                        end case;
                     when others =>
                         null;
                 end case;

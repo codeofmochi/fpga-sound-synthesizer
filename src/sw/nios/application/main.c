@@ -24,9 +24,7 @@ void play_music() {
 	sound_osc_start();
 
 	for (size_t i = 0; i < music->length; i++) {
-		// pack scale number with tone identifier
-		uint32_t note = (music->sheet[i].scale << 4) | music->sheet[i].tone;
-		sound_set_note(note);
+		sound_set_note(music->sheet[i].midi_msg);
 		usleep(music->sheet[i].duration_ms * 1000);
 	}
 
