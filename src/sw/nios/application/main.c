@@ -39,7 +39,7 @@ int main() {
   setup_audio_codec();
 
   printf("Playing music...\n");
-  music = &pieces[1];
+  music = &pieces[3];
   play_music();
 
   while(1);

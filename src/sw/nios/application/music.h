@@ -175,10 +175,11 @@ struct note base_scale[BASE_SCALE_LENGTH] = {
 	{NOTE_STOP | Gs5,  0}
 };
 
+
 /**
  * Piece: Bach Prelude in C Major
  */
-#define BACH_PRELUDE_C_LENGTH (34 * 32 + 1)
+#define BACH_PRELUDE_C_LENGTH (34 * 32 + 2)
 #define BACH_PRELUDE_C_SEMIQUAVER_MS 200
 struct note bach_prelude_c[BACH_PRELUDE_C_LENGTH] = {
 	// bar 1
@@ -1308,13 +1309,22 @@ struct note bach_prelude_c[BACH_PRELUDE_C_LENGTH] = {
 	{NOTE_STOP | C4, 0}
 };
 
+#include "bach_prelude_c_poly.h"
+#include "castlevania.h"
+#include "mario_theme.h"
+#include "wii_music.h"
+
 /**
  * List of all available music pieces
  */
-#define PIECES_LENGTH 2
+#define PIECES_LENGTH 6
 struct piece pieces[PIECES_LENGTH] = {
 	{BASE_SCALE_LENGTH, base_scale},
 	{BACH_PRELUDE_C_LENGTH, bach_prelude_c},
+	{BACH_PRELUDE_C_POLY_LENGTH, bach_prelude_c_poly},
+	{CASTLEVANIA_LENGTH, castlevania},
+	{MARIO_LENGTH, mario},
+	{WII_MUSIC_LENGTH, wii_music}
 };
 
 #endif /* MUSIC_H_ */
