@@ -31,7 +31,7 @@ entity osc is
         sclk_en   : in std_logic;
         reset_n   : in std_logic;
         -- global on/off register
-        reg_on    : in std_logic;
+        reg_on : in std_logic;
         -- note_step register for this osc
         note_step : in unsigned({OSC_DEPTH - 1} downto 0);
         -- output sample

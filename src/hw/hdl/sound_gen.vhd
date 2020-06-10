@@ -2,9 +2,12 @@
 -- Sound synthesizer master generator
 -- Computes final audio samples to be sent to the WM8731 audio codec
 --
--- file: sound_gen.vhd
--- author: Alexandre CHAU & Loïc DROZ
--- date: 08/06/2020
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE sound_gen.py!
+--
+-- file:                sound_gen.vhd
+-- auto-generated from: sound_gen.py
+-- last generated:      2020-06-10
+-- author:              Alexandre CHAU & Loïc DROZ
 --
 library ieee;
 use ieee.std_logic_1164.all;
@@ -31,21 +34,20 @@ entity sound_gen is
     );
 end entity sound_gen;
 
-architecture fsm of sound_gen is
+architecture rtl of sound_gen is
     -- register map
     constant REG_START_OFFSET    : std_logic_vector(as_address'length - 1 downto 0) := "00";
     constant REG_STOP_OFFSET     : std_logic_vector(as_address'length - 1 downto 0) := "01";
     constant REG_MIDI_MSG_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
 
     -- internal register
-    signal reg_on    : std_logic;
-    signal note_step : unsigned(15 downto 0); -- TODO: width scale with 1/# instances osc
+    signal reg_on : std_logic;
 
     -- slow clock at 48 KHz
     signal sclk_counter : integer range 0 to 255;
     signal sclk_en      : std_logic;
 
-    -- sound fsm
+    -- sound transfer fsm
     type state_type is (Q_IDLE, Q_SEND);
     signal state               : state_type;
     signal sample_bits_counter : integer range 0 to 31;
@@ -63,33 +65,36 @@ architecture fsm of sound_gen is
         );
     end component linear_diff;
 
-    -- oscillator instance
-    signal osc_out : signed(15 downto 0); -- TODO: width scale with 1/# instances osc
+    -- oscillator component
     component osc
         port (
             aud_clk12 : in std_logic;
             sclk_en   : in std_logic;
             reset_n   : in std_logic;
             reg_on    : in std_logic;
-            note_step : in unsigned(15 downto 0); -- TODO: width scale with 1/# instances osc
-
-            osc_out : out signed(15 downto 0) -- TODO: width scale with 1/# instances osc
+            note_step : in unsigned(15 downto 0);
+            osc_out   : out signed(15 downto 0)
         );
     end component osc;
+
+    -- registers for oscillator instance osc0
+    signal osc0_note_step : unsigned(15 downto 0);
+    signal osc0_note      : std_logic_vector(31 downto 0);
+    signal osc0_out       : signed(15 downto 0);
 begin
     -- instantiate linear diff computation
-    linear_diff_instance : linear_diff port map(
+    linear_diff0 : linear_diff port map(
         midi_note_code   => as_writedata(15 downto 8),
         note_linear_diff => linear_diff_result
     );
 
     -- writes to the status registers on Avalon writes
     as_write_process : process (clk, reset_n)
-        variable octave_shift : integer range -3 to 2;
     begin
         if reset_n = '0' then
-            reg_on    <= '0';
-            note_step <= to_unsigned(0, note_step'length);
+            reg_on         <= '0';
+            osc0_note      <= (others => '0');
+            osc0_note_step <= to_unsigned(0, osc0_note_step'length);
 
         elsif rising_edge(clk) then
             if as_write = '1' then
@@ -100,8 +105,11 @@ begin
                         reg_on <= '0';
                     when REG_MIDI_MSG_OFFSET =>
                         -- save note_step if MIDI event is note on (0x90)
+                        -- TODO: implement OSC selection
                         if to_integer(unsigned(as_writedata(23 downto 16))) = 16#90# then
-                            note_step <= linear_diff_result;
+                            -- select osc0
+                            osc0_note      <= as_writedata;
+                            osc0_note_step <= linear_diff_result;
                         end if;
                     when others =>
                         null;
@@ -165,14 +173,14 @@ begin
         end if;
     end process transfer_fsm;
 
-    -- instantiate oscillator
+    -- oscillator osc0 instance
     osc0 : osc port map(
         aud_clk12 => aud_clk12,
         sclk_en   => sclk_en,
         reset_n   => reset_n,
         reg_on    => reg_on,
-        note_step => note_step,
-        osc_out   => osc_out
+        note_step => osc0_note_step,
+        osc_out   => osc0_out
     );
 
     -- mixes sound from generators into the final audio sample
@@ -184,7 +192,7 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                sample <= osc_out; -- TODO: sum oscillators here
+                sample <= osc0_out;
 
                 -- mix samples in mono: left and right channels get assigned the sample
                 audio(31 downto 16) <= std_logic_vector(sample);
@@ -193,4 +201,6 @@ begin
         end if;
     end process mixer;
 
-end architecture fsm;
+end architecture rtl;
+
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE sound_gen.py!
