@@ -2,9 +2,12 @@
 -- Sound synthesizer oscillator module
 -- Computes an audio wave given a note frequency
 --
--- file:    osc.vhd
--- author:  Alexandre CHAU & Loïc DROZ
--- date:    10/06/2020
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE osc.py!
+--
+-- file:                osc.vhd
+-- auto-generated from: osc.py
+-- last generated:      2020-06-10
+-- author:              Alexandre CHAU & Loïc DROZ
 --
 library ieee;
 use ieee.std_logic_1164.all;
@@ -12,13 +15,16 @@ use ieee.numeric_std.all;
 
 entity osc is
     port (
+        -- audio timing inputs
         aud_clk12 : in std_logic;
         sclk_en   : in std_logic;
         reset_n   : in std_logic;
+        -- global on/off register
         reg_on    : in std_logic;
-        note_step : in unsigned(15 downto 0); -- TODO: width scale with 1/# instances osc
-
-        osc_out : out signed(15 downto 0) -- TODO: width scale with 1/# instances osc
+        -- note_step register for this osc
+        note_step : in unsigned(15 downto 0);
+        -- output sample
+        osc_out : out signed(15 downto 0)
     );
 end entity osc;
 
@@ -33,8 +39,8 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                if to_integer(sample) >= 32767 then         -- TODO: scale width with 1/# instances osc, max signed int
-                    sample <= to_signed(-32768, sample'length); -- TODO: scale width with 1/# instances osc, min signed int
+                if to_integer(sample) >= 32767 then
+                    sample <= to_signed(-32767, sample'length);
                 else
                     sample <= sample + signed(std_logic_vector(note_step));
                 end if;
@@ -44,3 +50,5 @@ begin
         end if;
     end process saw_gen;
 end architecture arith;
+
+-- DO NOT CHANGE THIS FILE DIRECTLY, INSTEAD CHANGE osc.py!

@@ -16,3 +16,6 @@ N_OSC = 1
 DAC_MAX_SIGNED_INT = (2 ** (DAC_DEPTH - 1) - 1)
 DAC_MIN_SIGNED_INT = -(2 ** (DAC_DEPTH - 1))
 OSC_RANGE = int(math.floor((DAC_MAX_SIGNED_INT - DAC_MIN_SIGNED_INT) / N_OSC))
+OSC_DEPTH = math.ceil(math.log(OSC_RANGE, 2))
+OSC_MAX = int(math.floor(OSC_RANGE / 2))
+OSC_MIN = -OSC_MAX

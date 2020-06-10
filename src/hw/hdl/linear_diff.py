@@ -9,7 +9,7 @@
 # author:       Alexandre CHAU
 import math
 import datetime
-from sound_gen import DAC_FREQ, OSC_RANGE
+from sound_gen import DAC_FREQ, OSC_RANGE, OSC_DEPTH
 
 # Compute frequencies from MIDI note number
 # From https://www.audiolabs-erlangen.de/resources/MIR/FMP/C1/C1S3_CenterFrequencyMIDI.html
@@ -54,7 +54,7 @@ entity = f"""
 entity linear_diff is
     port (
         midi_note_code   : in std_logic_vector(7 downto 0);
-        note_linear_diff : out unsigned({math.ceil(math.log(OSC_RANGE, 2)) - 1} downto 0)
+        note_linear_diff : out unsigned({OSC_DEPTH - 1} downto 0)
     );
 end entity linear_diff;
 """
