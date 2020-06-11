@@ -40,6 +40,10 @@ architecture rtl of buttons_controller is
     -- internal registers
     signal reg_status : std_logic_vector(switch'length + buttons'length - 1 downto 0);
     signal reg_irq    : std_logic;
+
+    -- falling edges dectectors
+    signal prevs : std_logic_vector(buttons'length - 1 downto 0);
+    signal currs : std_logic_vector(buttons'length - 1 downto 0);
 begin
     -- Assign IRQ line
     irq <= reg_irq;
@@ -63,6 +67,8 @@ begin
         if reset_n = '0' then
             reg_status <= (others => '0');
             reg_irq    <= '0';
+            prevs      <= (others => '0');
+            currs      <= (others => '0');
 
         elsif rising_edge(clk) then
             if as_write = '1' then
@@ -72,13 +78,18 @@ begin
                     when others =>
                         null;
                 end case;
-            end if;
-        end if;
+            else
+                -- detect button presses
+                for i in 0 to (buttons'length - 1) loop
+                    currs(i) <= buttons(i);
+                    prevs(i) <= currs(i);
 
-        -- detect any button press
-        if falling_edge(buttons(2)) or falling_edge(buttons(1)) or falling_edge(buttons(0)) then
-            reg_irq    <= '1';
-            reg_status <= switch & buttons;
+                    if prevs(i) = '1' and currs(i) = '0' then
+                        reg_irq    <= '1';
+                        reg_status <= switch & buttons;
+                    end if;
+                end loop;
+            end if;
         end if;
     end process as_write_process;
 end architecture rtl;
