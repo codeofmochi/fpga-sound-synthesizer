@@ -1,5 +1,7 @@
 	component system is
 		port (
+			buttons_controller_0_conduit_switch  : in    std_logic_vector(9 downto 0)  := (others => 'X'); -- switch
+			buttons_controller_0_conduit_buttons : in    std_logic_vector(2 downto 0)  := (others => 'X'); -- buttons
 			clk_clk                              : in    std_logic                     := 'X';             -- clk
 			i2c_slave_0_debug_debug_sclk         : out   std_logic;                                        -- debug_sclk
 			i2c_slave_0_debug_debug_sdat         : out   std_logic;                                        -- debug_sdat
@@ -21,9 +23,7 @@
 			sound_gen_0_audio_aud_daclrck        : out   std_logic;                                        -- aud_daclrck
 			sound_gen_0_audio_aud_dacdat         : out   std_logic;                                        -- aud_dacdat
 			sound_gen_0_debug_debug_daclrck      : out   std_logic;                                        -- debug_daclrck
-			sound_gen_0_debug_debug_dacdat       : out   std_logic;                                        -- debug_dacdat
-			buttons_controller_0_conduit_switch  : in    std_logic_vector(9 downto 0)  := (others => 'X'); -- switch
-			buttons_controller_0_conduit_buttons : in    std_logic_vector(2 downto 0)  := (others => 'X')  -- buttons
+			sound_gen_0_debug_debug_dacdat       : out   std_logic                                         -- debug_dacdat
 		);
 	end component system;
 

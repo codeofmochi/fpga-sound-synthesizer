@@ -1,5 +1,7 @@
 	component system is
 		port (
+			buttons_controller_0_conduit_switch  : in    std_logic_vector(9 downto 0)  := (others => 'X'); -- switch
+			buttons_controller_0_conduit_buttons : in    std_logic_vector(2 downto 0)  := (others => 'X'); -- buttons
 			clk_clk                              : in    std_logic                     := 'X';             -- clk
 			i2c_slave_0_debug_debug_sclk         : out   std_logic;                                        -- debug_sclk
 			i2c_slave_0_debug_debug_sdat         : out   std_logic;                                        -- debug_sdat
@@ -21,14 +23,14 @@
 			sound_gen_0_audio_aud_daclrck        : out   std_logic;                                        -- aud_daclrck
 			sound_gen_0_audio_aud_dacdat         : out   std_logic;                                        -- aud_dacdat
 			sound_gen_0_debug_debug_daclrck      : out   std_logic;                                        -- debug_daclrck
-			sound_gen_0_debug_debug_dacdat       : out   std_logic;                                        -- debug_dacdat
-			buttons_controller_0_conduit_switch  : in    std_logic_vector(9 downto 0)  := (others => 'X'); -- switch
-			buttons_controller_0_conduit_buttons : in    std_logic_vector(2 downto 0)  := (others => 'X')  -- buttons
+			sound_gen_0_debug_debug_dacdat       : out   std_logic                                         -- debug_dacdat
 		);
 	end component system;
 
 	u0 : component system
 		port map (
+			buttons_controller_0_conduit_switch  => CONNECTED_TO_buttons_controller_0_conduit_switch,  -- buttons_controller_0_conduit.switch
+			buttons_controller_0_conduit_buttons => CONNECTED_TO_buttons_controller_0_conduit_buttons, --                             .buttons
 			clk_clk                              => CONNECTED_TO_clk_clk,                              --                          clk.clk
 			i2c_slave_0_debug_debug_sclk         => CONNECTED_TO_i2c_slave_0_debug_debug_sclk,         --            i2c_slave_0_debug.debug_sclk
 			i2c_slave_0_debug_debug_sdat         => CONNECTED_TO_i2c_slave_0_debug_debug_sdat,         --                             .debug_sdat
@@ -50,8 +52,6 @@
 			sound_gen_0_audio_aud_daclrck        => CONNECTED_TO_sound_gen_0_audio_aud_daclrck,        --                             .aud_daclrck
 			sound_gen_0_audio_aud_dacdat         => CONNECTED_TO_sound_gen_0_audio_aud_dacdat,         --                             .aud_dacdat
 			sound_gen_0_debug_debug_daclrck      => CONNECTED_TO_sound_gen_0_debug_debug_daclrck,      --            sound_gen_0_debug.debug_daclrck
-			sound_gen_0_debug_debug_dacdat       => CONNECTED_TO_sound_gen_0_debug_debug_dacdat,       --                             .debug_dacdat
-			buttons_controller_0_conduit_switch  => CONNECTED_TO_buttons_controller_0_conduit_switch,  -- buttons_controller_0_conduit.switch
-			buttons_controller_0_conduit_buttons => CONNECTED_TO_buttons_controller_0_conduit_buttons  --                             .buttons
+			sound_gen_0_debug_debug_dacdat       => CONNECTED_TO_sound_gen_0_debug_debug_dacdat        --                             .debug_dacdat
 		);
 

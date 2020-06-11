@@ -775,14 +775,14 @@
    version="18.1"
    start="nios2_gen2_0.irq"
    end="buttons_controller_0.interrupt_sender">
-  <parameter name="irqNumber" value="1" />
+  <parameter name="irqNumber" value="0" />
  </connection>
  <connection
    kind="interrupt"
    version="18.1"
    start="nios2_gen2_0.irq"
    end="jtag_uart_0.irq">
-  <parameter name="irqNumber" value="0" />
+  <parameter name="irqNumber" value="1" />
  </connection>
  <connection kind="reset" version="18.1" start="clk_0.clk_reset" end="pll_0.reset" />
  <connection
