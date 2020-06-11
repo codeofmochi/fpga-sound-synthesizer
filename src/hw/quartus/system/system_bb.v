@@ -21,7 +21,9 @@ module system (
 	sound_gen_0_audio_aud_daclrck,
 	sound_gen_0_audio_aud_dacdat,
 	sound_gen_0_debug_debug_daclrck,
-	sound_gen_0_debug_debug_dacdat);	
+	sound_gen_0_debug_debug_dacdat,
+	buttons_controller_0_conduit_switch,
+	buttons_controller_0_conduit_buttons);	
 
 	input		clk_clk;
 	output		i2c_slave_0_debug_debug_sclk;
@@ -45,4 +47,6 @@ module system (
 	output		sound_gen_0_audio_aud_dacdat;
 	output		sound_gen_0_debug_debug_daclrck;
 	output		sound_gen_0_debug_debug_dacdat;
+	input	[9:0]	buttons_controller_0_conduit_switch;
+	input	[2:0]	buttons_controller_0_conduit_buttons;
 endmodule

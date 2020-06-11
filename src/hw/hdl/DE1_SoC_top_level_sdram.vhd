@@ -84,7 +84,7 @@ entity DE1_SoC_top_level_sdram is
         -- PS2_DAT2         : inout std_logic;
 
         -- SW
-        -- SW : in std_logic_vector(9 downto 0);
+        SW : in std_logic_vector(9 downto 0);
 
         -- Video-In
         -- TD_CLK27         : inout std_logic;
@@ -170,28 +170,30 @@ architecture rtl of DE1_SoC_top_level_sdram is
 
     component system is
         port (
-            clk_clk                         : in std_logic := 'X';                                    -- clk
-            reset_reset_n                   : in std_logic := 'X';                                    -- reset_n
-            pll_0_clk12_clk                 : out std_logic;                                          -- clk
-            pll_0_sdram_clk                 : out std_logic;                                          -- clk
-            sdram_controller_0_wire_addr    : out std_logic_vector(12 downto 0);                      -- addr
-            sdram_controller_0_wire_ba      : out std_logic_vector(1 downto 0);                       -- ba
-            sdram_controller_0_wire_cas_n   : out std_logic;                                          -- cas_n
-            sdram_controller_0_wire_cke     : out std_logic;                                          -- cke
-            sdram_controller_0_wire_cs_n    : out std_logic;                                          -- cs_n
-            sdram_controller_0_wire_dq      : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
-            sdram_controller_0_wire_dqm     : out std_logic_vector(1 downto 0);                       -- dqm
-            sdram_controller_0_wire_ras_n   : out std_logic;                                          -- ras_n
-            sdram_controller_0_wire_we_n    : out std_logic;                                          -- we_n
-            i2c_slave_0_i2c_i2c_sclk        : out std_logic;                                          -- i2c_sclk
-            i2c_slave_0_i2c_i2c_sdat        : inout std_logic := 'X';                                 -- i2c_sdat
-            i2c_slave_0_debug_debug_sclk    : out std_logic;                                          -- debug_sclk
-            i2c_slave_0_debug_debug_sdat    : out std_logic;                                          -- debug_sdat
-            sound_gen_0_audio_aud_clk12     : in std_logic := 'X';                                    -- aud_clk12
-            sound_gen_0_audio_aud_daclrck   : out std_logic;                                          -- aud_daclrck
-            sound_gen_0_audio_aud_dacdat    : out std_logic;                                          -- aud_dacdat
-            sound_gen_0_debug_debug_daclrck : out std_logic;                                          -- debug_daclrck
-            sound_gen_0_debug_debug_dacdat  : out std_logic                                           -- debug_dacdat
+            clk_clk                              : in std_logic := 'X';                                    -- clk
+            reset_reset_n                        : in std_logic := 'X';                                    -- reset_n
+            pll_0_clk12_clk                      : out std_logic;                                          -- clk
+            pll_0_sdram_clk                      : out std_logic;                                          -- clk
+            sdram_controller_0_wire_addr         : out std_logic_vector(12 downto 0);                      -- addr
+            sdram_controller_0_wire_ba           : out std_logic_vector(1 downto 0);                       -- ba
+            sdram_controller_0_wire_cas_n        : out std_logic;                                          -- cas_n
+            sdram_controller_0_wire_cke          : out std_logic;                                          -- cke
+            sdram_controller_0_wire_cs_n         : out std_logic;                                          -- cs_n
+            sdram_controller_0_wire_dq           : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
+            sdram_controller_0_wire_dqm          : out std_logic_vector(1 downto 0);                       -- dqm
+            sdram_controller_0_wire_ras_n        : out std_logic;                                          -- ras_n
+            sdram_controller_0_wire_we_n         : out std_logic;                                          -- we_n
+            i2c_slave_0_i2c_i2c_sclk             : out std_logic;                                          -- i2c_sclk
+            i2c_slave_0_i2c_i2c_sdat             : inout std_logic := 'X';                                 -- i2c_sdat
+            i2c_slave_0_debug_debug_sclk         : out std_logic;                                          -- debug_sclk
+            i2c_slave_0_debug_debug_sdat         : out std_logic;                                          -- debug_sdat
+            sound_gen_0_audio_aud_clk12          : in std_logic := 'X';                                    -- aud_clk12
+            sound_gen_0_audio_aud_daclrck        : out std_logic;                                          -- aud_daclrck
+            sound_gen_0_audio_aud_dacdat         : out std_logic;                                          -- aud_dacdat
+            sound_gen_0_debug_debug_daclrck      : out std_logic;                                          -- debug_daclrck
+            sound_gen_0_debug_debug_dacdat       : out std_logic;                                          -- debug_dacdat
+            buttons_controller_0_conduit_switch  : in std_logic_vector(9 downto 0) := (others => 'X');     -- switch
+            buttons_controller_0_conduit_buttons : in std_logic_vector(2 downto 0) := (others => 'X')      -- buttons
         );
     end component system;
 begin
@@ -203,28 +205,30 @@ begin
 
     u0 : component system
         port map(
-            clk_clk                         => CLOCK_50,      -- clk.clk
-            reset_reset_n                   => KEY_N(0),      -- reset.reset_n
-            pll_0_clk12_clk                 => clk12,         -- pll_0_clk12.clk
-            pll_0_sdram_clk                 => DRAM_CLK,      -- pll_0_sdram.clk
-            sdram_controller_0_wire_addr    => DRAM_ADDR,     -- sdram_controller_0_wire.addr
-            sdram_controller_0_wire_ba      => DRAM_BA,       -- .ba
-            sdram_controller_0_wire_cas_n   => DRAM_CAS_N,    -- .cas_n
-            sdram_controller_0_wire_cke     => DRAM_CKE,      -- .cke
-            sdram_controller_0_wire_cs_n    => DRAM_CS_N,     -- .cs_n
-            sdram_controller_0_wire_dq      => DRAM_DQ,       -- .dq
-            sdram_controller_0_wire_dqm(1)  => DRAM_UDQM,     -- .dqm_high
-            sdram_controller_0_wire_dqm(0)  => DRAM_LDQM,     -- .dqm_low
-            sdram_controller_0_wire_ras_n   => DRAM_RAS_N,    -- .ras_n
-            sdram_controller_0_wire_we_n    => DRAM_WE_N,     -- .we_n
-            i2c_slave_0_i2c_i2c_sclk        => FPGA_I2C_SCLK, -- i2c_slave_0_i2c.i2c_sclk
-            i2c_slave_0_i2c_i2c_sdat        => FPGA_I2C_SDAT, -- .i2c_sdat
-            i2c_slave_0_debug_debug_sclk    => GPIO_0_D(0),   -- i2c_slave_0_debug.debug_sclk
-            i2c_slave_0_debug_debug_sdat    => GPIO_0_D(1),   -- .debug_sdat
-            sound_gen_0_audio_aud_clk12     => clk12,         -- sound_gen_0_audio.aud_clk12
-            sound_gen_0_audio_aud_daclrck   => AUD_DACLRCK,   -- .aud_daclrck
-            sound_gen_0_audio_aud_dacdat    => AUD_DACDAT,    -- .aud_dacdat
-            sound_gen_0_debug_debug_daclrck => GPIO_1_D(0),   -- sound_gen_0_debug.debug_daclrck
-            sound_gen_0_debug_debug_dacdat  => GPIO_1_D(1)    -- .debug_dacdat
+            clk_clk                              => CLOCK_50,         -- clk.clk
+            reset_reset_n                        => KEY_N(0),         -- reset.reset_n
+            pll_0_clk12_clk                      => clk12,            -- pll_0_clk12.clk
+            pll_0_sdram_clk                      => DRAM_CLK,         -- pll_0_sdram.clk
+            sdram_controller_0_wire_addr         => DRAM_ADDR,        -- sdram_controller_0_wire.addr
+            sdram_controller_0_wire_ba           => DRAM_BA,          -- .ba
+            sdram_controller_0_wire_cas_n        => DRAM_CAS_N,       -- .cas_n
+            sdram_controller_0_wire_cke          => DRAM_CKE,         -- .cke
+            sdram_controller_0_wire_cs_n         => DRAM_CS_N,        -- .cs_n
+            sdram_controller_0_wire_dq           => DRAM_DQ,          -- .dq
+            sdram_controller_0_wire_dqm(1)       => DRAM_UDQM,        -- .dqm_high
+            sdram_controller_0_wire_dqm(0)       => DRAM_LDQM,        -- .dqm_low
+            sdram_controller_0_wire_ras_n        => DRAM_RAS_N,       -- .ras_n
+            sdram_controller_0_wire_we_n         => DRAM_WE_N,        -- .we_n
+            i2c_slave_0_i2c_i2c_sclk             => FPGA_I2C_SCLK,    -- i2c_slave_0_i2c.i2c_sclk
+            i2c_slave_0_i2c_i2c_sdat             => FPGA_I2C_SDAT,    -- .i2c_sdat
+            i2c_slave_0_debug_debug_sclk         => GPIO_0_D(0),      -- i2c_slave_0_debug.debug_sclk
+            i2c_slave_0_debug_debug_sdat         => GPIO_0_D(1),      -- .debug_sdat
+            sound_gen_0_audio_aud_clk12          => clk12,            -- sound_gen_0_audio.aud_clk12
+            sound_gen_0_audio_aud_daclrck        => AUD_DACLRCK,      -- .aud_daclrck
+            sound_gen_0_audio_aud_dacdat         => AUD_DACDAT,       -- .aud_dacdat
+            sound_gen_0_debug_debug_daclrck      => GPIO_1_D(0),      -- sound_gen_0_debug.debug_daclrck
+            sound_gen_0_debug_debug_dacdat       => GPIO_1_D(1),      -- .debug_dacdat
+            buttons_controller_0_conduit_switch  => SW,               -- buttons_controller_0_conduit.switch
+            buttons_controller_0_conduit_buttons => KEY_N(3 downto 1) -- .buttons
         );
     end architecture rtl;
