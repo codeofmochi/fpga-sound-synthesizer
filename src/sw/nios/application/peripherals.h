@@ -43,6 +43,11 @@ void i2c_configure(uint8_t address, uint16_t data);
 void setup_audio_codec();
 
 /**
+ * Volume control
+ */
+void set_volume(uint8_t volume);
+
+/**
  * Starts the sound oscillator
  */
 void sound_osc_start();

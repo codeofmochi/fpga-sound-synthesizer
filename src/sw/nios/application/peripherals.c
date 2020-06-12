@@ -37,6 +37,10 @@ void setup_audio_codec() {
 	i2c_configure(WM8731_I2C_ADDRESS, 0b0000101000000000);
 }
 
+void set_volume(uint8_t volume) {
+	i2c_configure(WM8731_I2C_ADDRESS, 0b000001010 << 7 | volume);
+}
+
 void sound_osc_start() {
 	IOWR_32DIRECT(SOUND_GEN_0_BASE, SOUND_GEN_REG_START, 1);
 }

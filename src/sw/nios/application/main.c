@@ -14,6 +14,8 @@
 #include "peripherals.h"
 #include "music.h"
 
+#define DEFAULT_VOLUME 0b1111001
+
 // current music piece
 struct piece* music = NULL;
 // current song index
@@ -22,6 +24,8 @@ uint32_t music_index = 0;
 size_t music_cursor = 0;
 // mute control
 uint8_t is_mute = 0;
+// volume control
+uint8_t volume = DEFAULT_VOLUME;
 
 /**
  * Plays the current piece
@@ -77,6 +81,29 @@ void toggle_mute() {
 	}
 }
 
+
+/**
+ * Volume control
+ */
+void volume_up() {
+	// if max reached, do nothing
+	if (volume == 0b1111111) { return; }
+	volume += 1;
+	set_volume(volume);
+}
+
+void volume_down() {
+	// if min reached, do nothing
+	if (volume == 0b0110000) { return; }
+	volume -= 1;
+	set_volume(volume);
+}
+
+void volume_reset() {
+	volume = DEFAULT_VOLUME;
+	set_volume(volume);
+}
+
 static void controls_isr(void* context) {
 	// handle buttons + switch
 	uint32_t status = controls_read_status();
@@ -99,6 +126,18 @@ static void controls_isr(void* context) {
 				// KEY_N[3] (leftmost) button is pressed
 				// toggle mute
 				toggle_mute();
+			}
+			break;
+		case 1:
+			if ((buttons & 0b001) != 0) {
+				// KEY_N[1] (second from right) button is pressed
+				volume_reset();
+			} else if ((buttons & 0b010) != 0) {
+				// KEY_N[2] (second from left) button is pressed
+				volume_up();
+			} else if ((buttons & 0b100) != 0) {
+				// KEY_N[3] (leftmost) button is pressed
+				volume_down();
 			}
 			break;
 	}
