@@ -48,3 +48,13 @@ void sound_osc_stop() {
 void sound_set_note(uint32_t note) {
 	IOWR_32DIRECT(SOUND_GEN_0_BASE, SOUND_GEN_REG_NOTE, note);
 }
+
+
+uint32_t controls_read_status() {
+	return IORD_32DIRECT(BUTTONS_CONTROLLER_0_BASE, CONTROLS_REG_STATUS);
+}
+
+
+void controls_clear_irq() {
+	IOWR_32DIRECT(BUTTONS_CONTROLLER_0_BASE, CONTROLS_REG_IRQ, 1);
+}

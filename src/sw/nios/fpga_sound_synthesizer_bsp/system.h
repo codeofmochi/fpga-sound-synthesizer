@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_gen2_0' in SOPC Builder design 'system'
  * SOPC Builder design path: /home/vm/Documents/rtes/Lab4/src/hw/system.sopcinfo
  *
- * Generated: Wed Jun 10 23:54:39 CEST 2020
+ * Generated: Fri Jun 12 02:01:39 CEST 2020
  */
 
 /*
@@ -145,6 +145,7 @@
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
 #define __ALTERA_AVALON_SYSID_QSYS
 #define __ALTERA_NIOS2_GEN2
+#define __BUTTONS_CONTROLLER
 #define __I2C_SLAVE
 #define __SOUND_GEN
 
@@ -165,24 +166,38 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x8001028
+#define ALT_STDERR_BASE 0x8001038
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x8001028
+#define ALT_STDIN_BASE 0x8001038
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x8001028
+#define ALT_STDOUT_BASE 0x8001038
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
 #define ALT_STDOUT_TYPE "altera_avalon_jtag_uart"
 #define ALT_SYSTEM_NAME "system"
+
+
+/*
+ * buttons_controller_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_buttons_controller_0 buttons_controller
+#define BUTTONS_CONTROLLER_0_BASE 0x8001000
+#define BUTTONS_CONTROLLER_0_IRQ 0
+#define BUTTONS_CONTROLLER_0_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define BUTTONS_CONTROLLER_0_NAME "/dev/buttons_controller_0"
+#define BUTTONS_CONTROLLER_0_SPAN 16
+#define BUTTONS_CONTROLLER_0_TYPE "buttons_controller"
 
 
 /*
@@ -202,7 +217,7 @@
  */
 
 #define ALT_MODULE_CLASS_i2c_slave_0 i2c_slave
-#define I2C_SLAVE_0_BASE 0x8001010
+#define I2C_SLAVE_0_BASE 0x8001020
 #define I2C_SLAVE_0_IRQ -1
 #define I2C_SLAVE_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define I2C_SLAVE_0_NAME "/dev/i2c_slave_0"
@@ -216,8 +231,8 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x8001028
-#define JTAG_UART_0_IRQ 0
+#define JTAG_UART_0_BASE 0x8001038
+#define JTAG_UART_0_IRQ 1
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
 #define JTAG_UART_0_READ_DEPTH 64
@@ -273,7 +288,7 @@
  */
 
 #define ALT_MODULE_CLASS_sound_gen_0 sound_gen
-#define SOUND_GEN_0_BASE 0x8001000
+#define SOUND_GEN_0_BASE 0x8001010
 #define SOUND_GEN_0_IRQ -1
 #define SOUND_GEN_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SOUND_GEN_0_NAME "/dev/sound_gen_0"
@@ -287,13 +302,13 @@
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x8001020
+#define SYSID_QSYS_0_BASE 0x8001030
 #define SYSID_QSYS_0_ID 0
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1591825291
+#define SYSID_QSYS_0_TIMESTAMP 1591919477
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

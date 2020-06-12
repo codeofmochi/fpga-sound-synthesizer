@@ -26,6 +26,9 @@
 #define SOUND_GEN_REG_STOP	4
 #define SOUND_GEN_REG_NOTE	8
 
+#define CONTROLS_REG_STATUS	0
+#define CONTROLS_REG_IRQ	4
+
 /**
  * Configures an I2C peripheral on the FPGA
  * @param address: I2C address of the device
@@ -58,5 +61,15 @@ void sound_osc_stop();
  * 			Use the note abstractions provided in music.h
  */
 void sound_set_note(uint32_t note);
+
+/**
+ * Reads the controls status register
+ */
+uint32_t controls_read_status();
+
+/**
+ * Clears the controls IRQ register
+ */
+void controls_clear_irq();
 
 #endif /* PERIPHERALS_H_ */
