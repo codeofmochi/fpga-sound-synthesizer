@@ -1,4 +1,5 @@
 *.mid
 *.midi
 *.converted.c
+*.h
 node_modules/
