@@ -1,4 +1,13 @@
+/**
+ * Chopin Etude Op 25, No 11
 
+	#include "chopin_etude.h"
+	#define PIECES_LENGTH 1
+	struct piece pieces[PIECES_LENGTH] = {
+		{CHOPIN_ETUDE_LENGTH, chopin_etude}
+	};
+
+ */
 #define CHOPIN_ETUDE_LENGTH 6324
 struct note chopin_etude[CHOPIN_ETUDE_LENGTH] = {
 	{ NOTE_START | E4, 480},

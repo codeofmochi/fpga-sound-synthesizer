@@ -1,4 +1,7 @@
-
+/**
+ * Bach Prelude in C Major (polyphonic version)
+ * Default include
+ */
 #define BACH_PRELUDE_C_POLY_LENGTH 1098
 struct note bach_prelude_c_poly[BACH_PRELUDE_C_POLY_LENGTH] = {
 	{ NOTE_START | C4, 200},

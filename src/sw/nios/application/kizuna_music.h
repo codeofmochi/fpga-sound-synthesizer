@@ -1,4 +1,13 @@
+/**
+ * Poppin'Party - Kizuna Music
 
+	#include "kizuna_music.h"
+	#define PIECES_LENGTH 1
+	struct piece pieces[PIECES_LENGTH] = {
+		{KIZUNA_MUSIC_LENGTH, kizuna_music}
+	};
+
+ */
 #define KIZUNA_MUSIC_LENGTH 2720
 struct note kizuna_music[KIZUNA_MUSIC_LENGTH] = {
 	{ NOTE_START | E5, 0},

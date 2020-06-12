@@ -1,4 +1,13 @@
+/**
+ * Chopin Fantaisie Impromptu
 
+	#include "chopin_fantaisie.h"
+	#define PIECES_LENGTH 1
+	struct piece pieces[PIECES_LENGTH] = {
+		{CHOPIN_FANTAISIE_LENGTH, chopin_fantaisie}
+	};
+
+ */
 #define CHOPIN_FANTAISIE_LENGTH 6044
 struct note chopin_fantaisie[CHOPIN_FANTAISIE_LENGTH] = {
 	{ NOTE_START | Gs3, 0},

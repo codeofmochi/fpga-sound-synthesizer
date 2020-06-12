@@ -1,5 +1,6 @@
 /**
- * Piece: Bach Prelude in C Major
+ * Piece: Bach Prelude in C Major (monophonic version)
+ * Default include
  */
 #define BACH_PRELUDE_C_LENGTH (34 * 32 + 2)
 #define BACH_PRELUDE_C_SEMIQUAVER_MS 200

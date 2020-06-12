@@ -1,4 +1,7 @@
-
+/**
+ * Wii theme music
+ * Default include
+ */
 #define WII_MUSIC_LENGTH 1088
 struct note wii_music[WII_MUSIC_LENGTH] = {
 	{ NOTE_START | Fs4, 0},

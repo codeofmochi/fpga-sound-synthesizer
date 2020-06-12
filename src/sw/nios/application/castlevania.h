@@ -1,4 +1,7 @@
-
+/*
+ * Castlevania - Vampire Killer
+ * Default include
+ */
 #define CASTLEVANIA_LENGTH 648
 struct note castlevania[CASTLEVANIA_LENGTH] = {
 	{ NOTE_START | D5, 0},

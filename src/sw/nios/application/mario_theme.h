@@ -1,4 +1,7 @@
-
+/**
+ * Mario theme
+ * Default include
+ */
 #define MARIO_LENGTH 838
 struct note mario[MARIO_LENGTH] = {
 	{ NOTE_START | E5, 0},

@@ -1,4 +1,13 @@
+/**
+ * Kreisler - Liebesleid (Rachmnaninoff arrangement)
 
+	#include "liebesleid.h"
+	#define PIECES_LENGTH 1
+	struct piece pieces[PIECES_LENGTH] = {
+		{LIEBESLEID_LENGTH, liebesleid}
+	};
+
+ */
 #define LIEBESLEID_LENGTH 6224
 struct note liebesleid[LIEBESLEID_LENGTH] = {
 	{ NOTE_START | E4, 94},

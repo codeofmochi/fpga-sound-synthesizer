@@ -1,4 +1,13 @@
+/**
+ * u's - Snow Halation
 
+	#include "snow_halation.h"
+	#define PIECES_LENGTH 1
+	struct piece pieces[PIECES_LENGTH] = {
+		{SNOW_HALATION_LENGTH, snow_halation}
+	};
+
+ */
 #define SNOW_HALATION_LENGTH 2512
 struct note snow_halation[SNOW_HALATION_LENGTH] = {
 	{ NOTE_START | A3, 144},
