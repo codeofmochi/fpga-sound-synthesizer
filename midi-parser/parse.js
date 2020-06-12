@@ -101,5 +101,5 @@ struct note ${arrayVariableName}[${lengthVariableName}] = {
 ${notes.map(n => `\t{ ${n.type === NOTE_START_TYPE ? "NOTE_START" : "NOTE_STOP"} | ${n.note.replace('#', 's')}${n.scale}, ${n.delta}}`).join(`,\n`)}
 };
 `
-    fs.writeFileSync(`${file}.converted.c`, code, {encoding: 'utf8'})
+    fs.writeFileSync(`${name}.h`, code, {encoding: 'utf8'})
 })
