@@ -468,21 +468,25 @@ begin
         elsif falling_edge(aud_clk12) then
             if sclk_en = '1' then
                 if to_integer(vu_meter_value) < 1 then
-                    vu_meter <= "0000000000";
-                elsif to_integer(vu_meter_value) < 2 then
                     vu_meter <= "0000000001";
-                elsif to_integer(vu_meter_value) < 4 then
+                elsif to_integer(vu_meter_value) < 2 then
                     vu_meter <= "0000000011";
-                elsif to_integer(vu_meter_value) < 8 then
+                elsif to_integer(vu_meter_value) < 4 then
                     vu_meter <= "0000000111";
-                elsif to_integer(vu_meter_value) < 16 then
+                elsif to_integer(vu_meter_value) < 8 then
                     vu_meter <= "0000001111";
-                elsif to_integer(vu_meter_value) < 32 then
+                elsif to_integer(vu_meter_value) < 16 then
                     vu_meter <= "0000011111";
-                elsif to_integer(vu_meter_value) < 64 then
+                elsif to_integer(vu_meter_value) < 32 then
                     vu_meter <= "0000111111";
-                elsif to_integer(vu_meter_value) < 128 then
+                elsif to_integer(vu_meter_value) < 64 then
                     vu_meter <= "0001111111";
+                elsif to_integer(vu_meter_value) < 128 then
+                    vu_meter <= "0011111111";
+                elsif to_integer(vu_meter_value) < 256 then
+                    vu_meter <= "0111111111";
+                elsif to_integer(vu_meter_value) < 512 then
+                    vu_meter <= "1111111111";
                 end if;
             end if;
         end if;

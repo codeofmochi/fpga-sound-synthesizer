@@ -112,6 +112,19 @@ osc_instances = [f"""
 
 mixer_osc = " + ".join([f"osc{i}_out" for i in range (0, N_OSC)])
 
+vu_meter_unary_conversion = [
+    f"""
+                elsif to_integer(vu_meter_value) < {2 ** i} then
+                    vu_meter <= \"{('1' * (i + 1)).zfill(VU_METER_DEPTH)}\";"""
+    for i in range(1, VU_METER_DEPTH)
+]
+vu_meter_unary_conversion = f"""
+                if to_integer(vu_meter_value) < {2 ** 0} then
+                    vu_meter <= "{('1' * 1).zfill(VU_METER_DEPTH)}";
+{"".join(vu_meter_unary_conversion)[1:]}
+                end if;
+"""
+
 architecture = f"""
 architecture rtl of sound_gen is
     -- register map
@@ -314,23 +327,7 @@ begin
             vu_meter <= (others => '0');
         elsif falling_edge(aud_clk12) then
             if sclk_en = '1' then
-                if to_integer(vu_meter_value) < {2 ** 0} then
-                    vu_meter <= "{('1' * 0).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 1} then
-                    vu_meter <= "{('1' * 1).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 2} then
-                    vu_meter <= "{('1' * 2).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 3} then
-                    vu_meter <= "{('1' * 3).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 4} then
-                    vu_meter <= "{('1' * 4).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 5} then
-                    vu_meter <= "{('1' * 5).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 6} then
-                    vu_meter <= "{('1' * 6).zfill(VU_METER_DEPTH)}";
-                elsif to_integer(vu_meter_value) < {2 ** 7} then
-                    vu_meter <= "{('1' * 7).zfill(VU_METER_DEPTH)}";
-                end if;
+{vu_meter_unary_conversion[1:-1]}
             end if;
         end if;
     end process vu_meter_unary_conversion;
