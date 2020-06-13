@@ -116,6 +116,11 @@ void set_osc_square() {
 	sound_set_osc_type(1);
 }
 
+void set_osc_triangle() {
+	// set oscillator to triangle wave
+	sound_set_osc_type(2);
+}
+
 static void controls_isr(void* context) {
 	// handle buttons + switch
 	uint32_t status = controls_read_status();
@@ -157,7 +162,7 @@ static void controls_isr(void* context) {
 		case 2:
 			if ((buttons & 0b001) != 0) {
 				// KEY_N[1] (second from right) button is pressed
-				// reserved for future osc type
+				set_osc_triangle();
 			} else if ((buttons & 0b010) != 0) {
 				// KEY_N[2] (second from left) button is pressed
 				set_osc_square();

@@ -35,25 +35,42 @@ architecture arith of osc is
     signal sample_counter : unsigned(note_period'length - 1 downto 0);
     signal saw_wave       : signed(31 downto 0);
     signal sqr_wave       : signed(31 downto 0);
+    signal tri_wave       : signed(31 downto 0);
 begin
     saw_gen : process (aud_clk12, reset_n)
+        variable note_period_half : unsigned(30 downto 0); -- 2x smaller thus 1 less bit
+        variable note_step_double : unsigned(31 downto 0);
     begin
         if reset_n = '0' then
             sample_counter <= to_unsigned(0, sample_counter'length);
             saw_wave       <= to_signed(0, saw_wave'length);
             sqr_wave       <= to_signed(0, sqr_wave'length); 
+            tri_wave       <= to_signed(0, tri_wave'length);
             osc_out        <= to_signed(0, osc_out'length);
+            note_period_half := to_unsigned(0, note_period_half'length);
+            note_step_double := to_unsigned(0, note_step_double'length);
 
         elsif falling_edge(aud_clk12) then
             if sclk_en = '1' then
+                -- half of period is period >> 1
+                note_period_half := note_period(note_period'length - 1 downto 1);
+                -- double of step is step << 1
+                note_step_double := note_step(note_step'length - 2 downto 0) & '0';
+
                 -- note period reached for this oscillator
                 if sample_counter >= note_period then
                     sample_counter <= to_unsigned(0, sample_counter'length);
                     saw_wave       <= to_signed(-268435455, saw_wave'length);
                     sqr_wave       <= to_signed(-268435455, sqr_wave'length);
+                    tri_wave       <= to_signed(-268435455, tri_wave'length);
                 else
-                    if to_integer(sample_counter) = to_integer(note_period(note_period'length - 1 downto 1)) then
+                    if to_integer(sample_counter) < to_integer(note_period_half) then
+                        tri_wave <= tri_wave + signed(std_logic_vector(note_step_double));
+                    elsif to_integer(sample_counter) = to_integer(note_period_half) then
                         sqr_wave <= to_signed(268435455, saw_wave'length);
+                        tri_wave <= to_signed(268435455, tri_wave'length);
+                    else -- to_integer(sample_counter) > to_integer(note_period_half)
+                        tri_wave <= tri_wave - signed(std_logic_vector(note_step_double));
                     end if;
                     sample_counter <= sample_counter + 1;
                     saw_wave       <= saw_wave + signed(std_logic_vector(note_step));
@@ -66,6 +83,7 @@ begin
                     case to_integer(osc_mode) is
                         when 0      => osc_out <= saw_wave;
                         when 1      => osc_out <= sqr_wave;
+                        when 2      => osc_out <= tri_wave;
                         when others => osc_out <= saw_wave;
                     end case;
                 end if;
