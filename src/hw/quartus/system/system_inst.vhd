@@ -23,7 +23,8 @@
 			sound_gen_0_audio_aud_daclrck        : out   std_logic;                                        -- aud_daclrck
 			sound_gen_0_audio_aud_dacdat         : out   std_logic;                                        -- aud_dacdat
 			sound_gen_0_debug_debug_daclrck      : out   std_logic;                                        -- debug_daclrck
-			sound_gen_0_debug_debug_dacdat       : out   std_logic                                         -- debug_dacdat
+			sound_gen_0_debug_debug_dacdat       : out   std_logic;                                        -- debug_dacdat
+			sound_gen_0_vu_meter_vu_meter        : out   std_logic_vector(9 downto 0)                      -- vu_meter
 		);
 	end component system;
 
@@ -52,6 +53,7 @@
 			sound_gen_0_audio_aud_daclrck        => CONNECTED_TO_sound_gen_0_audio_aud_daclrck,        --                             .aud_daclrck
 			sound_gen_0_audio_aud_dacdat         => CONNECTED_TO_sound_gen_0_audio_aud_dacdat,         --                             .aud_dacdat
 			sound_gen_0_debug_debug_daclrck      => CONNECTED_TO_sound_gen_0_debug_debug_daclrck,      --            sound_gen_0_debug.debug_daclrck
-			sound_gen_0_debug_debug_dacdat       => CONNECTED_TO_sound_gen_0_debug_debug_dacdat        --                             .debug_dacdat
+			sound_gen_0_debug_debug_dacdat       => CONNECTED_TO_sound_gen_0_debug_debug_dacdat,       --                             .debug_dacdat
+			sound_gen_0_vu_meter_vu_meter        => CONNECTED_TO_sound_gen_0_vu_meter_vu_meter         --         sound_gen_0_vu_meter.vu_meter
 		);
 

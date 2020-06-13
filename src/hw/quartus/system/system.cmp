@@ -23,7 +23,8 @@
 			sound_gen_0_audio_aud_daclrck        : out   std_logic;                                        -- aud_daclrck
 			sound_gen_0_audio_aud_dacdat         : out   std_logic;                                        -- aud_dacdat
 			sound_gen_0_debug_debug_daclrck      : out   std_logic;                                        -- debug_daclrck
-			sound_gen_0_debug_debug_dacdat       : out   std_logic                                         -- debug_dacdat
+			sound_gen_0_debug_debug_dacdat       : out   std_logic;                                        -- debug_dacdat
+			sound_gen_0_vu_meter_vu_meter        : out   std_logic_vector(9 downto 0)                      -- vu_meter
 		);
 	end component system;
 

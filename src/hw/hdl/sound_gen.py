@@ -22,6 +22,12 @@ OSC_RANGE = int(math.floor((DAC_MAX_SIGNED_INT - DAC_MIN_SIGNED_INT) / N_OSC))
 OSC_MAX = int(math.floor(OSC_RANGE / 2))
 OSC_MIN = -OSC_MAX
 
+# VU meter properties
+LED_LEN = 10
+VU_METER_DEPTH = LED_LEN
+VU_METER_INV_DECAY_LOG2 = 2
+VU_METER_EXP_DECAY = 1 / (2 ** VU_METER_INV_DECAY_LOG2) # Must be 1 / 2^n
+
 
 # Generate VHDL
 
@@ -59,7 +65,10 @@ entity sound_gen is
 
         -- Debug
         debug_daclrck : out std_logic;
-        debug_dacdat  : out std_logic
+        debug_dacdat  : out std_logic;
+
+        -- VU meter
+        vu_meter : out std_logic_vector({VU_METER_DEPTH - 1} downto 0)
     );
 end entity sound_gen;
 """
@@ -125,6 +134,9 @@ architecture rtl of sound_gen is
     -- final audio sample (sample is mono, audio is stereo)
     signal audio  : std_logic_vector({2 * DAC_DEPTH - 1} downto 0);
     signal sample : signed({DAC_DEPTH - 1} downto 0);
+
+    -- VU meter signals
+    signal vu_meter_value : signed(vu_meter'length - 1 downto 0);
 
     -- linear diff lookup table
     signal linear_diff_result : unsigned({OSC_DEPTH - 1} downto 0);
@@ -261,9 +273,67 @@ begin
                 -- mix samples in mono: left and right channels get assigned the same sample
                 audio({2 * DAC_DEPTH - 1} downto {DAC_DEPTH}) <= std_logic_vector(sample);
                 audio({DAC_DEPTH - 1} downto 0)  <= std_logic_vector(sample);
+
+            elsif reg_on = '0' then
+                sample <= to_signed(0, sample'length);
             end if;
         end if;
     end process mixer;
+
+    -- VU meter expnonential smoothing update process
+    vu_meter_smoothing : process (aud_clk12, reset_n)
+        variable prev_vu_meter_dec : signed(vu_meter_value'length - 1 downto 0) := (others => '0');
+        variable sample_dec        : signed(sample'length - 1 downto 0)            := (others => '0');
+    begin
+        if reset_n = '0' then
+            vu_meter_value <= (others => '0');
+        elsif falling_edge(aud_clk12) then
+            if sclk_en = '1' then
+                -- compute (1 - decay) * previous vu_meter
+                prev_vu_meter_dec := vu_meter_value - shift_right(vu_meter_value, {VU_METER_INV_DECAY_LOG2});
+                -- compute abs(decay * current sample)
+                sample_dec := shift_right(sample, {VU_METER_INV_DECAY_LOG2});
+                if sample_dec < 0 then
+                    sample_dec := -sample_dec;
+                end if;
+                -- compute exponential smoothing
+                if sample'length >= vu_meter'length then
+                    vu_meter_value <= prev_vu_meter_dec + sample_dec(sample_dec'length - 1 downto sample_dec'length - vu_meter'length);
+                else
+                    vu_meter_value(sample'length - 1 downto 0)                     <= prev_vu_meter_dec(prev_vu_meter_dec'length - 1 downto prev_vu_meter_dec'length - sample'length) + sample_dec;
+                    vu_meter_value(vu_meter_value'length - 1 downto sample'length) <= (others => '0');
+                end if;
+            end if;
+        end if;
+    end process vu_meter_smoothing;
+
+    -- VU meter conversion to unary process
+    vu_meter_unary_conversion : process (aud_clk12, reset_n)
+    begin
+        if reset_n = '0' then
+            vu_meter <= (others => '0');
+        elsif falling_edge(aud_clk12) then
+            if sclk_en = '1' then
+                if to_integer(vu_meter_value) < {2 ** 0} then
+                    vu_meter <= "{('1' * 0).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 1} then
+                    vu_meter <= "{('1' * 1).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 2} then
+                    vu_meter <= "{('1' * 2).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 3} then
+                    vu_meter <= "{('1' * 3).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 4} then
+                    vu_meter <= "{('1' * 4).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 5} then
+                    vu_meter <= "{('1' * 5).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 6} then
+                    vu_meter <= "{('1' * 6).zfill(VU_METER_DEPTH)}";
+                elsif to_integer(vu_meter_value) < {2 ** 7} then
+                    vu_meter <= "{('1' * 7).zfill(VU_METER_DEPTH)}";
+                end if;
+            end if;
+        end if;
+    end process vu_meter_unary_conversion;
 
 end architecture rtl;
 

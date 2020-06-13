@@ -169,6 +169,14 @@
          type = "String";
       }
    }
+   element system
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -222,6 +230,11 @@
  <interface
    name="sound_gen_0_debug"
    internal="sound_gen_0.debug"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="sound_gen_0_vu_meter"
+   internal="sound_gen_0.vu_meter"
    type="conduit"
    dir="end" />
  <module

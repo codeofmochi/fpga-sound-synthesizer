@@ -6,7 +6,7 @@
 --
 -- file:                sound_gen.vhd
 -- auto-generated from: sound_gen.py
--- last generated:      2020-06-10
+-- last generated:      2020-06-13
 -- author:              Alexandre CHAU & Loïc DROZ
 --
 library ieee;
@@ -30,7 +30,10 @@ entity sound_gen is
 
         -- Debug
         debug_daclrck : out std_logic;
-        debug_dacdat  : out std_logic
+        debug_dacdat  : out std_logic;
+
+        -- VU meter
+        vu_meter : out std_logic_vector(9 downto 0)
     );
 end entity sound_gen;
 
@@ -55,6 +58,9 @@ architecture rtl of sound_gen is
     -- final audio sample (sample is mono, audio is stereo)
     signal audio  : std_logic_vector(63 downto 0);
     signal sample : signed(31 downto 0);
+
+    -- VU meter signals
+    signal vu_meter_value : signed(vu_meter'length - 1 downto 0);
 
     -- linear diff lookup table
     signal linear_diff_result : unsigned(31 downto 0);
@@ -420,9 +426,67 @@ begin
                 -- mix samples in mono: left and right channels get assigned the same sample
                 audio(63 downto 32) <= std_logic_vector(sample);
                 audio(31 downto 0)  <= std_logic_vector(sample);
+
+            elsif reg_on = '0' then
+                sample <= to_signed(0, sample'length);
             end if;
         end if;
     end process mixer;
+
+    -- VU meter expnonential smoothing update process
+    vu_meter_smoothing : process (aud_clk12, reset_n)
+        variable prev_vu_meter_dec : signed(vu_meter_value'length - 1 downto 0) := (others => '0');
+        variable sample_dec        : signed(sample'length - 1 downto 0)            := (others => '0');
+    begin
+        if reset_n = '0' then
+            vu_meter_value <= (others => '0');
+        elsif falling_edge(aud_clk12) then
+            if sclk_en = '1' then
+                -- compute (1 - decay) * previous vu_meter
+                prev_vu_meter_dec := vu_meter_value - shift_right(vu_meter_value, 2);
+                -- compute abs(decay * current sample)
+                sample_dec := shift_right(sample, 2);
+                if sample_dec < 0 then
+                    sample_dec := -sample_dec;
+                end if;
+                -- compute exponential smoothing
+                if sample'length >= vu_meter'length then
+                    vu_meter_value <= prev_vu_meter_dec + sample_dec(sample_dec'length - 1 downto sample_dec'length - vu_meter'length);
+                else
+                    vu_meter_value(sample'length - 1 downto 0)                     <= prev_vu_meter_dec(prev_vu_meter_dec'length - 1 downto prev_vu_meter_dec'length - sample'length) + sample_dec;
+                    vu_meter_value(vu_meter_value'length - 1 downto sample'length) <= (others => '0');
+                end if;
+            end if;
+        end if;
+    end process vu_meter_smoothing;
+
+    -- VU meter conversion to unary process
+    vu_meter_unary_conversion : process (aud_clk12, reset_n)
+    begin
+        if reset_n = '0' then
+            vu_meter <= (others => '0');
+        elsif falling_edge(aud_clk12) then
+            if sclk_en = '1' then
+                if to_integer(vu_meter_value) < 1 then
+                    vu_meter <= "0000000000";
+                elsif to_integer(vu_meter_value) < 2 then
+                    vu_meter <= "0000000001";
+                elsif to_integer(vu_meter_value) < 4 then
+                    vu_meter <= "0000000011";
+                elsif to_integer(vu_meter_value) < 8 then
+                    vu_meter <= "0000000111";
+                elsif to_integer(vu_meter_value) < 16 then
+                    vu_meter <= "0000001111";
+                elsif to_integer(vu_meter_value) < 32 then
+                    vu_meter <= "0000011111";
+                elsif to_integer(vu_meter_value) < 64 then
+                    vu_meter <= "0000111111";
+                elsif to_integer(vu_meter_value) < 128 then
+                    vu_meter <= "0001111111";
+                end if;
+            end if;
+        end if;
+    end process vu_meter_unary_conversion;
 
 end architecture rtl;
 

@@ -22,6 +22,7 @@
 		.sound_gen_0_audio_aud_daclrck        (<connected-to-sound_gen_0_audio_aud_daclrck>),        //                             .aud_daclrck
 		.sound_gen_0_audio_aud_dacdat         (<connected-to-sound_gen_0_audio_aud_dacdat>),         //                             .aud_dacdat
 		.sound_gen_0_debug_debug_daclrck      (<connected-to-sound_gen_0_debug_debug_daclrck>),      //            sound_gen_0_debug.debug_daclrck
-		.sound_gen_0_debug_debug_dacdat       (<connected-to-sound_gen_0_debug_debug_dacdat>)        //                             .debug_dacdat
+		.sound_gen_0_debug_debug_dacdat       (<connected-to-sound_gen_0_debug_debug_dacdat>),       //                             .debug_dacdat
+		.sound_gen_0_vu_meter_vu_meter        (<connected-to-sound_gen_0_vu_meter_vu_meter>)         //         sound_gen_0_vu_meter.vu_meter
 	);
 

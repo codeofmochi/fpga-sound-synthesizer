@@ -23,7 +23,8 @@ module system (
 	sound_gen_0_audio_aud_daclrck,
 	sound_gen_0_audio_aud_dacdat,
 	sound_gen_0_debug_debug_daclrck,
-	sound_gen_0_debug_debug_dacdat);	
+	sound_gen_0_debug_debug_dacdat,
+	sound_gen_0_vu_meter_vu_meter);	
 
 	input	[9:0]	buttons_controller_0_conduit_switch;
 	input	[2:0]	buttons_controller_0_conduit_buttons;
@@ -49,4 +50,5 @@ module system (
 	output		sound_gen_0_audio_aud_dacdat;
 	output		sound_gen_0_debug_debug_daclrck;
 	output		sound_gen_0_debug_debug_dacdat;
+	output	[9:0]	sound_gen_0_vu_meter_vu_meter;
 endmodule
