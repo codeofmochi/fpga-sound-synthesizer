@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Jun 12, 2020 9:16:59 PM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1591989419404</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Jun 13, 2020 7:44:01 PM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1592070241644</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>/home/vm/Documents/rtes/Lab4/src/sw/nios/fpga_sound_synthesizer_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>/home/vm/Documents/rtes/Lab4/src/hw/system.sopcinfo</SopcDesignFile>

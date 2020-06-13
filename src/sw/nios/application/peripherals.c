@@ -53,6 +53,9 @@ void sound_set_note(uint32_t note) {
 	IOWR_32DIRECT(SOUND_GEN_0_BASE, SOUND_GEN_REG_NOTE, note);
 }
 
+void sound_set_osc_type(uint32_t mode) {
+	IOWR_32DIRECT(SOUND_GEN_0_BASE, SOUND_GEN_REG_OSC_TYPE, mode);
+}
 
 uint32_t controls_read_status() {
 	return IORD_32DIRECT(BUTTONS_CONTROLLER_0_BASE, CONTROLS_REG_STATUS);

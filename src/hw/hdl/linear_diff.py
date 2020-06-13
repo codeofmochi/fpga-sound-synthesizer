@@ -30,7 +30,8 @@ linear_diffs = [int(round(OSC_RANGE / ps)) for ps in periods_in_samples]
 
 # From here: section to generate VHDL code
 pretty_freqs = [str(round(f,2)) for f in freqs]
-midi_tone_diffs = list(zip(midi_range, tones, pretty_freqs, linear_diffs))
+int_periods_in_samples = [int(round(ps)) for ps in periods_in_samples]
+midi_tone_diffs = list(zip(midi_range, tones, pretty_freqs, int_periods_in_samples, linear_diffs))
 
 header = f"""--
 -- Linear diff lookup table
@@ -53,8 +54,9 @@ use ieee.numeric_std.all;
 entity = f"""
 entity linear_diff is
     port (
-        midi_note_code   : in std_logic_vector(7 downto 0);
-        note_linear_diff : out unsigned({OSC_DEPTH - 1} downto 0)
+        midi_note_code      : in std_logic_vector(7 downto 0);
+        note_linear_diff    : out unsigned({OSC_DEPTH - 1} downto 0);
+        note_period_samples : out unsigned({OSC_DEPTH - 1} downto 0)
     );
 end entity linear_diff;
 """
@@ -62,8 +64,9 @@ end entity linear_diff;
 cases = [f"""
             when {midi} =>
                 -- Note code {midi} is {tone} at {freq} Hz
-                note_linear_diff <= to_unsigned({diff}, note_linear_diff'length);
-""" for (midi, tone, freq, diff) in midi_tone_diffs]
+                note_linear_diff    <= to_unsigned({diff}, note_linear_diff'length);
+                note_period_samples <= to_unsigned({period_samples}, note_period_samples'length);
+""" for (midi, tone, freq, period_samples, diff) in midi_tone_diffs]
 
 architecture = f"""
 architecture lut of linear_diff is
@@ -74,7 +77,8 @@ begin
 {"".join(cases)}
             when others =>
                 -- note is out of range, default to 0
-                note_linear_diff <= (others => '0');
+                note_linear_diff    <= (others => '0');
+                note_period_samples <= (others => '0');
         end case;
     end process mux;
 end architecture lut;
