@@ -22,9 +22,10 @@
 #define I2C_REG_SEND	8
 #define I2C_REG_BUSY	12
 
-#define SOUND_GEN_REG_START 0
-#define SOUND_GEN_REG_STOP	4
-#define SOUND_GEN_REG_NOTE	8
+#define SOUND_GEN_REG_START		0
+#define SOUND_GEN_REG_STOP		4
+#define SOUND_GEN_REG_NOTE		8
+#define SOUND_GEN_REG_OSC_TYPE	12
 
 #define CONTROLS_REG_STATUS	0
 #define CONTROLS_REG_IRQ	4
@@ -56,6 +57,11 @@ void sound_osc_start();
  * Stops the sound oscillator
  */
 void sound_osc_stop();
+
+/**
+ * Changes the oscillator type
+ */
+void sound_set_osc_type(uint32_t mode);
 
 /**
  * Sends a note to play to the oscillator.

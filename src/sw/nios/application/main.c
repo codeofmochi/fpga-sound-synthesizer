@@ -81,7 +81,6 @@ void toggle_mute() {
 	}
 }
 
-
 /**
  * Volume control
  */
@@ -102,6 +101,19 @@ void volume_down() {
 void volume_reset() {
 	volume = DEFAULT_VOLUME;
 	set_volume(volume);
+}
+
+/**
+ * Oscillator type
+ */
+void set_osc_saw() {
+	// set oscillator to saw wave (default)
+	sound_set_osc_type(0);
+}
+
+void set_osc_square() {
+	// set oscillator to square wave
+	sound_set_osc_type(1);
 }
 
 static void controls_isr(void* context) {
@@ -128,6 +140,7 @@ static void controls_isr(void* context) {
 				toggle_mute();
 			}
 			break;
+		// volume control mode
 		case 1:
 			if ((buttons & 0b001) != 0) {
 				// KEY_N[1] (second from right) button is pressed
@@ -138,6 +151,19 @@ static void controls_isr(void* context) {
 			} else if ((buttons & 0b100) != 0) {
 				// KEY_N[3] (leftmost) button is pressed
 				volume_down();
+			}
+			break;
+		// oscillator type mode
+		case 2:
+			if ((buttons & 0b001) != 0) {
+				// KEY_N[1] (second from right) button is pressed
+				// reserved for future osc type
+			} else if ((buttons & 0b010) != 0) {
+				// KEY_N[2] (second from left) button is pressed
+				set_osc_square();
+			} else if ((buttons & 0b100) != 0) {
+				// KEY_N[3] (leftmost) button is pressed
+				set_osc_saw();
 			}
 			break;
 	}
