@@ -31,10 +31,12 @@ entity osc is
         sclk_en   : in std_logic;
         reset_n   : in std_logic;
         -- global on/off register
-        reg_on : in std_logic;
+        reg_on   : in std_logic;
+        osc_mode : in unsigned(31 downto 0);
         -- notes register for this osc
-        note      : in std_logic_vector(31 downto 0);
-        note_step : in unsigned({OSC_DEPTH - 1} downto 0);
+        note        : in std_logic_vector(31 downto 0);
+        note_step   : in unsigned({OSC_DEPTH - 1} downto 0);
+        note_period : in unsigned({OSC_DEPTH - 1} downto 0);
         -- output sample
         osc_out : out signed({OSC_DEPTH - 1} downto 0)
     );
@@ -43,28 +45,43 @@ end entity osc;
 
 architecture = f"""
 architecture arith of osc is
-    signal sample : signed({OSC_DEPTH * 2 - 1} downto 0); -- full {OSC_DEPTH * 2}-bit register to allow clipping
+    signal sample_counter : unsigned(note_period'length - 1 downto 0);
+    signal saw_wave       : signed({OSC_DEPTH - 1} downto 0);
+    signal sqr_wave       : signed({OSC_DEPTH - 1} downto 0);
 begin
     saw_gen : process (aud_clk12, reset_n)
     begin
         if reset_n = '0' then
-            sample  <= to_signed(0, sample'length);
-            osc_out <= to_signed(0, osc_out'length);
+            sample_counter <= to_unsigned(0, sample_counter'length);
+            saw_wave       <= to_signed(0, saw_wave'length);
+            sqr_wave       <= to_signed(0, sqr_wave'length); 
+            osc_out        <= to_signed(0, osc_out'length);
 
         elsif falling_edge(aud_clk12) then
             if sclk_en = '1' then
-                -- stop sound if device has been stopped or note is 0
-                if reg_on = '0' or to_integer(unsigned(note(15 downto 8))) = 0 then
-                    sample <= to_signed(0, sample'length);
-                -- max value for this oscillator reached, go to min value
-                elsif to_integer(sample) >= {OSC_MAX} then
-                    sample <= to_signed({OSC_MIN}, sample'length);
-                -- saw wave: simply increment the sample rate
+                -- note period reached for this oscillator
+                if sample_counter >= note_period then
+                    sample_counter <= to_unsigned(0, sample_counter'length);
+                    saw_wave       <= to_signed({OSC_MIN}, saw_wave'length);
+                    sqr_wave       <= to_signed({OSC_MIN}, sqr_wave'length);
                 else
-                    sample <= sample + signed(std_logic_vector(note_step));
+                    if to_integer(sample_counter) = to_integer(note_period(note_period'length - 1 downto 1)) then
+                        sqr_wave <= to_signed({OSC_MAX}, saw_wave'length);
+                    end if;
+                    sample_counter <= sample_counter + 1;
+                    saw_wave       <= saw_wave + signed(std_logic_vector(note_step));
                 end if;
 
-                osc_out <= resize(sample, osc_out'length);
+                -- stop sound if device has been stopped or note is 0
+                if reg_on = '0' or to_integer(unsigned(note(15 downto 8))) = 0 then
+                    osc_out <= to_signed(0, osc_out'length);
+                else
+                    case to_integer(osc_mode) is
+                        when 0      => osc_out <= saw_wave;
+                        when 1      => osc_out <= sqr_wave;
+                        when others => osc_out <= saw_wave;
+                    end case;
+                end if;
             end if;
         end if;
     end process saw_gen;

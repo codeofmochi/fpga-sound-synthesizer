@@ -66,26 +66,30 @@ end entity sound_gen;
 
 osc_registers = [f"""
     -- registers for oscillator instance osc{i}
-    signal osc{i}_note_step : unsigned({OSC_DEPTH - 1} downto 0);
-    signal osc{i}_note      : std_logic_vector(31 downto 0);
-    signal osc{i}_out       : signed({OSC_DEPTH - 1} downto 0);""" for i in range(0, N_OSC)]
+    signal osc{i}_note_step   : unsigned({OSC_DEPTH - 1} downto 0);
+    signal osc{i}_note_period : unsigned({OSC_DEPTH - 1} downto 0);
+    signal osc{i}_note        : std_logic_vector(31 downto 0);
+    signal osc{i}_out         : signed({OSC_DEPTH - 1} downto 0);""" for i in range(0, N_OSC)]
 
 osc_registers_resets = [f"""
-            osc{i}_note      <= (others => '0');
-            osc{i}_note_step <= to_unsigned(0, osc{i}_note_step'length);""" for i in range(0, N_OSC)]
+            osc{i}_note        <= (others => '0');
+            osc{i}_note_step   <= to_unsigned(0, osc{i}_note_step'length);
+            osc{i}_note_period <= to_unsigned(0, osc{i}_note_period'length);""" for i in range(0, N_OSC)]
 
 osc_select_start = [f"""
                                 {"els" if i != 0 else ""}if to_integer(unsigned(osc{i}_note(15 downto 8))) = 0 then
                                     -- this osc{i} is empty, play the note on it
-                                    osc{i}_note      <= as_writedata;
-                                    osc{i}_note_step <= linear_diff_result;
+                                    osc{i}_note        <= as_writedata;
+                                    osc{i}_note_step   <= linear_diff_result;
+                                    osc{i}_note_period <= period_samples_result;
 """ for i in range(0, N_OSC)] + ["\n                                end if;"]
 
 osc_select_stop = [f"""
                                 if osc{i}_note(15 downto 8) = as_writedata(15 downto 8) then
                                     -- this osc{i} is playing this note, stop it
-                                    osc{i}_note      <= (others => '0');
-                                    osc{i}_note_step <= to_unsigned(0, osc{i}_note_step'length);
+                                    osc{i}_note        <= (others => '0');
+                                    osc{i}_note_step   <= to_unsigned(0, osc{i}_note_step'length);
+                                    osc{i}_note_period <= to_unsigned(0, osc{i}_note_step'length);
                                 end if;
 """ for i in range(0, N_OSC)]
 
@@ -93,12 +97,14 @@ osc_instances = [f"""
     -- oscillator osc{i} instance
     osc{i} : osc port map(
         aud_clk12 => aud_clk12,
-        sclk_en   => sclk_en,
-        reset_n   => reset_n,
-        reg_on    => reg_on,
-        note      => osc{i}_note,
-        note_step => osc{i}_note_step,
-        osc_out   => osc{i}_out
+        sclk_en        => sclk_en,
+        reset_n        => reset_n,
+        reg_on         => reg_on,
+        osc_mode       => reg_osc_mode,
+        note           => osc{i}_note,
+        note_step      => osc{i}_note_step,
+        note_period    => osc{i}_note_period,
+        osc_out        => osc{i}_out
     );""" for i in range (0, N_OSC)]
 
 mixer_osc = " + ".join([f"osc{i}_out" for i in range (0, N_OSC)])
@@ -109,9 +115,11 @@ architecture rtl of sound_gen is
     constant REG_START_OFFSET    : std_logic_vector(as_address'length - 1 downto 0) := "00";
     constant REG_STOP_OFFSET     : std_logic_vector(as_address'length - 1 downto 0) := "01";
     constant REG_MIDI_MSG_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "10";
+    constant REG_OSC_MODE_OFFSET : std_logic_vector(as_address'length - 1 downto 0) := "11";
 
     -- internal register
-    signal reg_on : std_logic;
+    signal reg_on       : std_logic;
+    signal reg_osc_mode : unsigned(31 downto 0);
 
     -- slow clock at {DAC_FREQ} Hz
     signal sclk_counter : integer range 0 to {2 ** int(math.ceil(math.log2(PLL_CLOCK_FREQ / DAC_FREQ))) - 1};
@@ -127,32 +135,37 @@ architecture rtl of sound_gen is
     signal sample : signed({DAC_DEPTH - 1} downto 0);
 
     -- linear diff lookup table
-    signal linear_diff_result : unsigned({OSC_DEPTH - 1} downto 0);
+    signal linear_diff_result    : unsigned({OSC_DEPTH - 1} downto 0);
+    signal period_samples_result : unsigned({OSC_DEPTH - 1} downto 0);
     component linear_diff
         port (
-            midi_note_code   : in std_logic_vector(7 downto 0);
-            note_linear_diff : out unsigned({OSC_DEPTH - 1} downto 0)
+            midi_note_code      : in std_logic_vector(7 downto 0);
+            note_linear_diff    : out unsigned({OSC_DEPTH - 1} downto 0);
+            note_period_samples : out unsigned({OSC_DEPTH - 1} downto 0)
         );
     end component linear_diff;
 
     -- oscillator component
     component osc
         port (
-            aud_clk12 : in std_logic;
-            sclk_en   : in std_logic;
-            reset_n   : in std_logic;
-            reg_on    : in std_logic;
-            note      : in std_logic_vector(31 downto 0);
-            note_step : in unsigned({OSC_DEPTH - 1} downto 0);
-            osc_out   : out signed({OSC_DEPTH - 1} downto 0)
+            aud_clk12   : in std_logic;
+            sclk_en     : in std_logic;
+            reset_n     : in std_logic;
+            reg_on      : in std_logic;
+            osc_mode    : in unsigned(31 downto 0);
+            note        : in std_logic_vector(31 downto 0);
+            note_step   : in unsigned({OSC_DEPTH - 1} downto 0);
+            note_period : in unsigned({OSC_DEPTH - 1} downto 0);
+            osc_out     : out signed({OSC_DEPTH - 1} downto 0)
         );
     end component osc;
 {"".join(osc_registers)}
 begin
     -- instantiate linear diff computation
     linear_diff0 : linear_diff port map(
-        midi_note_code   => as_writedata(15 downto 8),
-        note_linear_diff => linear_diff_result
+        midi_note_code      => as_writedata(15 downto 8),
+        note_linear_diff    => linear_diff_result,
+        note_period_samples => period_samples_result
     );
 
     -- writes to the status registers on Avalon writes
@@ -160,6 +173,7 @@ begin
     begin
         if reset_n = '0' then
             reg_on         <= '0';
+            reg_osc_mode   <= (others => '0');
 {"".join(osc_registers_resets)[1:]}
 
         elsif rising_edge(clk) then
@@ -167,6 +181,7 @@ begin
                 case as_address is
                     when REG_START_OFFSET =>
                         reg_on <= '1';
+
                     when REG_STOP_OFFSET =>
                         reg_on <= '0';
 {"".join(osc_registers_resets)[1:].replace("            ", "                        ")}
@@ -184,6 +199,10 @@ begin
                             when others =>
                                 null;
                         end case;
+
+                    when REG_OSC_MODE_OFFSET =>
+                        reg_osc_mode <= unsigned(as_writedata);
+
                     when others =>
                         null;
                 end case;
