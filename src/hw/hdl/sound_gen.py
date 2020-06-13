@@ -105,15 +105,15 @@ osc_select_stop = [f"""
 osc_instances = [f"""
     -- oscillator osc{i} instance
     osc{i} : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc{i}_note,
-        note_step      => osc{i}_note_step,
-        note_period    => osc{i}_note_period,
-        osc_out        => osc{i}_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc{i}_note,
+        note_step   => osc{i}_note_step,
+        note_period => osc{i}_note_period,
+        osc_out     => osc{i}_out
     );""" for i in range (0, N_OSC)]
 
 mixer_osc = " + ".join([f"osc{i}_out" for i in range (0, N_OSC)])
@@ -197,8 +197,8 @@ begin
     as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
-            reg_on         <= '0';
-            reg_osc_mode   <= (others => '0');
+            reg_on           <= '0';
+            reg_osc_mode     <= (others => '0');
 {"".join(osc_registers_resets)[1:]}
 
         elsif rising_edge(clk) then
@@ -208,7 +208,7 @@ begin
                         reg_on <= '1';
 
                     when REG_STOP_OFFSET =>
-                        reg_on <= '0';
+                        reg_on           <= '0';
 {"".join(osc_registers_resets)[1:].replace("            ", "                        ")}
 
                     when REG_MIDI_MSG_OFFSET =>
@@ -315,7 +315,7 @@ begin
     -- VU meter expnonential smoothing update process
     vu_meter_smoothing : process (aud_clk12, reset_n)
         variable prev_vu_meter_dec : signed(vu_meter_value'length - 1 downto 0) := (others => '0');
-        variable sample_dec        : signed(sample'length - 1 downto 0)            := (others => '0');
+        variable sample_dec        : signed(sample'length - 1 downto 0)         := (others => '0');
     begin
         if reset_n = '0' then
             vu_meter_value <= (others => '0');
@@ -326,7 +326,7 @@ begin
                 -- compute abs(decay * current sample)
                 sample_dec := shift_right(sample, {VU_METER_INV_DECAY_LOG2});
                 if sample_dec < 0 then
-                    sample_dec := -sample_dec;
+                    sample_dec := - sample_dec;
                 end if;
                 -- compute exponential smoothing
                 if sample'length >= vu_meter'length then

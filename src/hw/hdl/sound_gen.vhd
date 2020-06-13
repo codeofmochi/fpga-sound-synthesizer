@@ -142,8 +142,8 @@ begin
     as_write_process : process (clk, reset_n)
     begin
         if reset_n = '0' then
-            reg_on         <= '0';
-            reg_osc_mode   <= (others => '0');
+            reg_on           <= '0';
+            reg_osc_mode     <= (others => '0');
             osc0_note        <= (others => '0');
             osc0_note_step   <= to_unsigned(0, osc0_note_step'length);
             osc0_note_period <= to_unsigned(0, osc0_note_period'length);
@@ -176,7 +176,7 @@ begin
                         reg_on <= '1';
 
                     when REG_STOP_OFFSET =>
-                        reg_on <= '0';
+                        reg_on           <= '0';
                         osc0_note        <= (others => '0');
                         osc0_note_step   <= to_unsigned(0, osc0_note_step'length);
                         osc0_note_period <= to_unsigned(0, osc0_note_period'length);
@@ -386,99 +386,99 @@ begin
 
     -- oscillator osc0 instance
     osc0 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc0_note,
-        note_step      => osc0_note_step,
-        note_period    => osc0_note_period,
-        osc_out        => osc0_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc0_note,
+        note_step   => osc0_note_step,
+        note_period => osc0_note_period,
+        osc_out     => osc0_out
     );
     -- oscillator osc1 instance
     osc1 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc1_note,
-        note_step      => osc1_note_step,
-        note_period    => osc1_note_period,
-        osc_out        => osc1_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc1_note,
+        note_step   => osc1_note_step,
+        note_period => osc1_note_period,
+        osc_out     => osc1_out
     );
     -- oscillator osc2 instance
     osc2 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc2_note,
-        note_step      => osc2_note_step,
-        note_period    => osc2_note_period,
-        osc_out        => osc2_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc2_note,
+        note_step   => osc2_note_step,
+        note_period => osc2_note_period,
+        osc_out     => osc2_out
     );
     -- oscillator osc3 instance
     osc3 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc3_note,
-        note_step      => osc3_note_step,
-        note_period    => osc3_note_period,
-        osc_out        => osc3_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc3_note,
+        note_step   => osc3_note_step,
+        note_period => osc3_note_period,
+        osc_out     => osc3_out
     );
     -- oscillator osc4 instance
     osc4 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc4_note,
-        note_step      => osc4_note_step,
-        note_period    => osc4_note_period,
-        osc_out        => osc4_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc4_note,
+        note_step   => osc4_note_step,
+        note_period => osc4_note_period,
+        osc_out     => osc4_out
     );
     -- oscillator osc5 instance
     osc5 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc5_note,
-        note_step      => osc5_note_step,
-        note_period    => osc5_note_period,
-        osc_out        => osc5_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc5_note,
+        note_step   => osc5_note_step,
+        note_period => osc5_note_period,
+        osc_out     => osc5_out
     );
     -- oscillator osc6 instance
     osc6 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc6_note,
-        note_step      => osc6_note_step,
-        note_period    => osc6_note_period,
-        osc_out        => osc6_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc6_note,
+        note_step   => osc6_note_step,
+        note_period => osc6_note_period,
+        osc_out     => osc6_out
     );
     -- oscillator osc7 instance
     osc7 : osc port map(
-        aud_clk12 => aud_clk12,
-        sclk_en        => sclk_en,
-        reset_n        => reset_n,
-        reg_on         => reg_on,
-        osc_mode       => reg_osc_mode,
-        note           => osc7_note,
-        note_step      => osc7_note_step,
-        note_period    => osc7_note_period,
-        osc_out        => osc7_out
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc7_note,
+        note_step   => osc7_note_step,
+        note_period => osc7_note_period,
+        osc_out     => osc7_out
     );
 
     -- mixes sound from generators into the final audio sample
@@ -505,7 +505,7 @@ begin
     -- VU meter expnonential smoothing update process
     vu_meter_smoothing : process (aud_clk12, reset_n)
         variable prev_vu_meter_dec : signed(vu_meter_value'length - 1 downto 0) := (others => '0');
-        variable sample_dec        : signed(sample'length - 1 downto 0)            := (others => '0');
+        variable sample_dec        : signed(sample'length - 1 downto 0)         := (others => '0');
     begin
         if reset_n = '0' then
             vu_meter_value <= (others => '0');
@@ -516,7 +516,7 @@ begin
                 -- compute abs(decay * current sample)
                 sample_dec := shift_right(sample, 2);
                 if sample_dec < 0 then
-                    sample_dec := -sample_dec;
+                    sample_dec := - sample_dec;
                 end if;
                 -- compute exponential smoothing
                 if sample'length >= vu_meter'length then

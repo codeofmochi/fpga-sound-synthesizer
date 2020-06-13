@@ -57,7 +57,7 @@ begin
         if reset_n = '0' then
             sample_counter <= to_unsigned(0, sample_counter'length);
             saw_wave       <= to_signed(0, saw_wave'length);
-            sqr_wave       <= to_signed(0, sqr_wave'length); 
+            sqr_wave       <= to_signed(0, sqr_wave'length);
             tri_wave       <= to_signed(0, tri_wave'length);
             osc_out        <= to_signed(0, osc_out'length);
             note_period_half := to_unsigned(0, note_period_half'length);
@@ -94,10 +94,14 @@ begin
                     osc_out <= to_signed(0, osc_out'length);
                 else
                     case to_integer(osc_mode) is
-                        when 0      => osc_out <= saw_wave;
-                        when 1      => osc_out <= sqr_wave;
-                        when 2      => osc_out <= tri_wave;
-                        when others => osc_out <= saw_wave;
+                        when 0 =>
+                            osc_out <= saw_wave;
+                        when 1 =>
+                            osc_out <= sqr_wave;
+                        when 2 =>
+                            osc_out <= tri_wave;
+                        when others =>
+                            osc_out <= saw_wave;
                     end case;
                 end if;
             end if;
