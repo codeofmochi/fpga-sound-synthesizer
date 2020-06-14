@@ -6,7 +6,7 @@
 --
 -- file:                osc.vhd
 -- auto-generated from: osc.py
--- last generated:      2020-06-13
+-- last generated:      2020-06-14
 -- author:              Alexandre CHAU & Loïc DROZ
 --
 library ieee;
@@ -60,15 +60,15 @@ begin
                 -- note period reached for this oscillator
                 if sample_counter >= note_period then
                     sample_counter <= to_unsigned(0, sample_counter'length);
-                    saw_wave       <= to_signed(-268435455, saw_wave'length);
-                    sqr_wave       <= to_signed(-268435455, sqr_wave'length);
-                    tri_wave       <= to_signed(-268435455, tri_wave'length);
+                    saw_wave       <= to_signed(-134217727, saw_wave'length);
+                    sqr_wave       <= to_signed(-134217727, sqr_wave'length);
+                    tri_wave       <= to_signed(-134217727, tri_wave'length);
                 else
                     if to_integer(sample_counter) < to_integer(note_period_half) then
                         tri_wave <= tri_wave + signed(std_logic_vector(note_step_double));
                     elsif to_integer(sample_counter) = to_integer(note_period_half) then
-                        sqr_wave <= to_signed(268435455, saw_wave'length);
-                        tri_wave <= to_signed(268435455, tri_wave'length);
+                        sqr_wave <= to_signed(134217727, saw_wave'length);
+                        tri_wave <= to_signed(134217727, tri_wave'length);
                     else -- to_integer(sample_counter) > to_integer(note_period_half)
                         tri_wave <= tri_wave - signed(std_logic_vector(note_step_double));
                     end if;

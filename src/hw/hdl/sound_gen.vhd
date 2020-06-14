@@ -6,7 +6,7 @@
 --
 -- file:                sound_gen.vhd
 -- auto-generated from: sound_gen.py
--- last generated:      2020-06-13
+-- last generated:      2020-06-14
 -- author:              Alexandre CHAU & Loïc DROZ
 --
 library ieee;
@@ -130,6 +130,46 @@ architecture rtl of sound_gen is
     signal osc7_note_period : unsigned(31 downto 0);
     signal osc7_note        : std_logic_vector(31 downto 0);
     signal osc7_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc8
+    signal osc8_note_step   : unsigned(31 downto 0);
+    signal osc8_note_period : unsigned(31 downto 0);
+    signal osc8_note        : std_logic_vector(31 downto 0);
+    signal osc8_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc9
+    signal osc9_note_step   : unsigned(31 downto 0);
+    signal osc9_note_period : unsigned(31 downto 0);
+    signal osc9_note        : std_logic_vector(31 downto 0);
+    signal osc9_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc10
+    signal osc10_note_step   : unsigned(31 downto 0);
+    signal osc10_note_period : unsigned(31 downto 0);
+    signal osc10_note        : std_logic_vector(31 downto 0);
+    signal osc10_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc11
+    signal osc11_note_step   : unsigned(31 downto 0);
+    signal osc11_note_period : unsigned(31 downto 0);
+    signal osc11_note        : std_logic_vector(31 downto 0);
+    signal osc11_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc12
+    signal osc12_note_step   : unsigned(31 downto 0);
+    signal osc12_note_period : unsigned(31 downto 0);
+    signal osc12_note        : std_logic_vector(31 downto 0);
+    signal osc12_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc13
+    signal osc13_note_step   : unsigned(31 downto 0);
+    signal osc13_note_period : unsigned(31 downto 0);
+    signal osc13_note        : std_logic_vector(31 downto 0);
+    signal osc13_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc14
+    signal osc14_note_step   : unsigned(31 downto 0);
+    signal osc14_note_period : unsigned(31 downto 0);
+    signal osc14_note        : std_logic_vector(31 downto 0);
+    signal osc14_out         : signed(31 downto 0);
+    -- registers for oscillator instance osc15
+    signal osc15_note_step   : unsigned(31 downto 0);
+    signal osc15_note_period : unsigned(31 downto 0);
+    signal osc15_note        : std_logic_vector(31 downto 0);
+    signal osc15_out         : signed(31 downto 0);
 begin
     -- instantiate linear diff computation
     linear_diff0 : linear_diff port map(
@@ -168,6 +208,30 @@ begin
             osc7_note        <= (others => '0');
             osc7_note_step   <= to_unsigned(0, osc7_note_step'length);
             osc7_note_period <= to_unsigned(0, osc7_note_period'length);
+            osc8_note        <= (others => '0');
+            osc8_note_step   <= to_unsigned(0, osc8_note_step'length);
+            osc8_note_period <= to_unsigned(0, osc8_note_period'length);
+            osc9_note        <= (others => '0');
+            osc9_note_step   <= to_unsigned(0, osc9_note_step'length);
+            osc9_note_period <= to_unsigned(0, osc9_note_period'length);
+            osc10_note        <= (others => '0');
+            osc10_note_step   <= to_unsigned(0, osc10_note_step'length);
+            osc10_note_period <= to_unsigned(0, osc10_note_period'length);
+            osc11_note        <= (others => '0');
+            osc11_note_step   <= to_unsigned(0, osc11_note_step'length);
+            osc11_note_period <= to_unsigned(0, osc11_note_period'length);
+            osc12_note        <= (others => '0');
+            osc12_note_step   <= to_unsigned(0, osc12_note_step'length);
+            osc12_note_period <= to_unsigned(0, osc12_note_period'length);
+            osc13_note        <= (others => '0');
+            osc13_note_step   <= to_unsigned(0, osc13_note_step'length);
+            osc13_note_period <= to_unsigned(0, osc13_note_period'length);
+            osc14_note        <= (others => '0');
+            osc14_note_step   <= to_unsigned(0, osc14_note_step'length);
+            osc14_note_period <= to_unsigned(0, osc14_note_period'length);
+            osc15_note        <= (others => '0');
+            osc15_note_step   <= to_unsigned(0, osc15_note_step'length);
+            osc15_note_period <= to_unsigned(0, osc15_note_period'length);
 
         elsif rising_edge(clk) then
             if as_write = '1' then
@@ -201,6 +265,30 @@ begin
                         osc7_note        <= (others => '0');
                         osc7_note_step   <= to_unsigned(0, osc7_note_step'length);
                         osc7_note_period <= to_unsigned(0, osc7_note_period'length);
+                        osc8_note        <= (others => '0');
+                        osc8_note_step   <= to_unsigned(0, osc8_note_step'length);
+                        osc8_note_period <= to_unsigned(0, osc8_note_period'length);
+                        osc9_note        <= (others => '0');
+                        osc9_note_step   <= to_unsigned(0, osc9_note_step'length);
+                        osc9_note_period <= to_unsigned(0, osc9_note_period'length);
+                        osc10_note        <= (others => '0');
+                        osc10_note_step   <= to_unsigned(0, osc10_note_step'length);
+                        osc10_note_period <= to_unsigned(0, osc10_note_period'length);
+                        osc11_note        <= (others => '0');
+                        osc11_note_step   <= to_unsigned(0, osc11_note_step'length);
+                        osc11_note_period <= to_unsigned(0, osc11_note_period'length);
+                        osc12_note        <= (others => '0');
+                        osc12_note_step   <= to_unsigned(0, osc12_note_step'length);
+                        osc12_note_period <= to_unsigned(0, osc12_note_period'length);
+                        osc13_note        <= (others => '0');
+                        osc13_note_step   <= to_unsigned(0, osc13_note_step'length);
+                        osc13_note_period <= to_unsigned(0, osc13_note_period'length);
+                        osc14_note        <= (others => '0');
+                        osc14_note_step   <= to_unsigned(0, osc14_note_step'length);
+                        osc14_note_period <= to_unsigned(0, osc14_note_period'length);
+                        osc15_note        <= (others => '0');
+                        osc15_note_step   <= to_unsigned(0, osc15_note_step'length);
+                        osc15_note_period <= to_unsigned(0, osc15_note_period'length);
 
                     when REG_MIDI_MSG_OFFSET =>
                         case to_integer(unsigned(as_writedata(23 downto 16))) is
@@ -253,6 +341,54 @@ begin
                                     osc7_note        <= as_writedata;
                                     osc7_note_step   <= linear_diff_result;
                                     osc7_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc8_note(15 downto 8))) = 0 then
+                                    -- this osc8 is empty, play the note on it
+                                    osc8_note        <= as_writedata;
+                                    osc8_note_step   <= linear_diff_result;
+                                    osc8_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc9_note(15 downto 8))) = 0 then
+                                    -- this osc9 is empty, play the note on it
+                                    osc9_note        <= as_writedata;
+                                    osc9_note_step   <= linear_diff_result;
+                                    osc9_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc10_note(15 downto 8))) = 0 then
+                                    -- this osc10 is empty, play the note on it
+                                    osc10_note        <= as_writedata;
+                                    osc10_note_step   <= linear_diff_result;
+                                    osc10_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc11_note(15 downto 8))) = 0 then
+                                    -- this osc11 is empty, play the note on it
+                                    osc11_note        <= as_writedata;
+                                    osc11_note_step   <= linear_diff_result;
+                                    osc11_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc12_note(15 downto 8))) = 0 then
+                                    -- this osc12 is empty, play the note on it
+                                    osc12_note        <= as_writedata;
+                                    osc12_note_step   <= linear_diff_result;
+                                    osc12_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc13_note(15 downto 8))) = 0 then
+                                    -- this osc13 is empty, play the note on it
+                                    osc13_note        <= as_writedata;
+                                    osc13_note_step   <= linear_diff_result;
+                                    osc13_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc14_note(15 downto 8))) = 0 then
+                                    -- this osc14 is empty, play the note on it
+                                    osc14_note        <= as_writedata;
+                                    osc14_note_step   <= linear_diff_result;
+                                    osc14_note_period <= period_samples_result;
+
+                                elsif to_integer(unsigned(osc15_note(15 downto 8))) = 0 then
+                                    -- this osc15 is empty, play the note on it
+                                    osc15_note        <= as_writedata;
+                                    osc15_note_step   <= linear_diff_result;
+                                    osc15_note_period <= period_samples_result;
 
                                 end if;
 
@@ -313,6 +449,62 @@ begin
                                     osc7_note        <= (others => '0');
                                     osc7_note_step   <= to_unsigned(0, osc7_note_step'length);
                                     osc7_note_period <= to_unsigned(0, osc7_note_step'length);
+                                end if;
+
+                                if osc8_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc8 is playing this note, stop it
+                                    osc8_note        <= (others => '0');
+                                    osc8_note_step   <= to_unsigned(0, osc8_note_step'length);
+                                    osc8_note_period <= to_unsigned(0, osc8_note_step'length);
+                                end if;
+
+                                if osc9_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc9 is playing this note, stop it
+                                    osc9_note        <= (others => '0');
+                                    osc9_note_step   <= to_unsigned(0, osc9_note_step'length);
+                                    osc9_note_period <= to_unsigned(0, osc9_note_step'length);
+                                end if;
+
+                                if osc10_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc10 is playing this note, stop it
+                                    osc10_note        <= (others => '0');
+                                    osc10_note_step   <= to_unsigned(0, osc10_note_step'length);
+                                    osc10_note_period <= to_unsigned(0, osc10_note_step'length);
+                                end if;
+
+                                if osc11_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc11 is playing this note, stop it
+                                    osc11_note        <= (others => '0');
+                                    osc11_note_step   <= to_unsigned(0, osc11_note_step'length);
+                                    osc11_note_period <= to_unsigned(0, osc11_note_step'length);
+                                end if;
+
+                                if osc12_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc12 is playing this note, stop it
+                                    osc12_note        <= (others => '0');
+                                    osc12_note_step   <= to_unsigned(0, osc12_note_step'length);
+                                    osc12_note_period <= to_unsigned(0, osc12_note_step'length);
+                                end if;
+
+                                if osc13_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc13 is playing this note, stop it
+                                    osc13_note        <= (others => '0');
+                                    osc13_note_step   <= to_unsigned(0, osc13_note_step'length);
+                                    osc13_note_period <= to_unsigned(0, osc13_note_step'length);
+                                end if;
+
+                                if osc14_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc14 is playing this note, stop it
+                                    osc14_note        <= (others => '0');
+                                    osc14_note_step   <= to_unsigned(0, osc14_note_step'length);
+                                    osc14_note_period <= to_unsigned(0, osc14_note_step'length);
+                                end if;
+
+                                if osc15_note(15 downto 8) = as_writedata(15 downto 8) then
+                                    -- this osc15 is playing this note, stop it
+                                    osc15_note        <= (others => '0');
+                                    osc15_note_step   <= to_unsigned(0, osc15_note_step'length);
+                                    osc15_note_period <= to_unsigned(0, osc15_note_step'length);
                                 end if;
 
                             when others =>
@@ -480,6 +672,102 @@ begin
         note_period => osc7_note_period,
         osc_out     => osc7_out
     );
+    -- oscillator osc8 instance
+    osc8 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc8_note,
+        note_step   => osc8_note_step,
+        note_period => osc8_note_period,
+        osc_out     => osc8_out
+    );
+    -- oscillator osc9 instance
+    osc9 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc9_note,
+        note_step   => osc9_note_step,
+        note_period => osc9_note_period,
+        osc_out     => osc9_out
+    );
+    -- oscillator osc10 instance
+    osc10 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc10_note,
+        note_step   => osc10_note_step,
+        note_period => osc10_note_period,
+        osc_out     => osc10_out
+    );
+    -- oscillator osc11 instance
+    osc11 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc11_note,
+        note_step   => osc11_note_step,
+        note_period => osc11_note_period,
+        osc_out     => osc11_out
+    );
+    -- oscillator osc12 instance
+    osc12 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc12_note,
+        note_step   => osc12_note_step,
+        note_period => osc12_note_period,
+        osc_out     => osc12_out
+    );
+    -- oscillator osc13 instance
+    osc13 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc13_note,
+        note_step   => osc13_note_step,
+        note_period => osc13_note_period,
+        osc_out     => osc13_out
+    );
+    -- oscillator osc14 instance
+    osc14 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc14_note,
+        note_step   => osc14_note_step,
+        note_period => osc14_note_period,
+        osc_out     => osc14_out
+    );
+    -- oscillator osc15 instance
+    osc15 : osc port map(
+        aud_clk12   => aud_clk12,
+        sclk_en     => sclk_en,
+        reset_n     => reset_n,
+        reg_on      => reg_on,
+        osc_mode    => reg_osc_mode,
+        note        => osc15_note,
+        note_step   => osc15_note_step,
+        note_period => osc15_note_period,
+        osc_out     => osc15_out
+    );
 
     -- mixes sound from generators into the final audio sample
     mixer : process (aud_clk12, reset_n)
@@ -490,7 +778,7 @@ begin
 
         elsif falling_edge(aud_clk12) then
             if reg_on = '1' and sclk_en = '1' then
-                sample <= osc0_out + osc1_out + osc2_out + osc3_out + osc4_out + osc5_out + osc6_out + osc7_out;
+                sample <= osc0_out + osc1_out + osc2_out + osc3_out + osc4_out + osc5_out + osc6_out + osc7_out + osc8_out + osc9_out + osc10_out + osc11_out + osc12_out + osc13_out + osc14_out + osc15_out;
 
                 -- mix samples in mono: left and right channels get assigned the same sample
                 audio(63 downto 32) <= std_logic_vector(sample);

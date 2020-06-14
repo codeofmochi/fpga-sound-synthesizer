@@ -11,7 +11,7 @@ import datetime
 # Configure DAC properties here
 DAC_FREQ = 96000
 DAC_DEPTH = 32
-N_OSC = 8
+N_OSC = 16
 PLL_CLOCK_FREQ = 12000000
 
 # Derived properties
