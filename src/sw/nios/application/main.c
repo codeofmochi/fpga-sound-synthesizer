@@ -33,6 +33,7 @@ uint8_t volume = DEFAULT_VOLUME;
 void play_music() {
 	// start oscillator
 	sound_osc_start();
+	is_mute = 0;
 
 	music_cursor = 0;
 	while (music_cursor < music->length) {
